@@ -45,7 +45,7 @@ void print_processes(const std::vector<Process>& processes) {
             } else {
                 std::cout << "==> CPU burst " << cpu_burst_time + 1 << "ms";
                 if (io_burst_time > 0) {
-                    std::cout << " ==> I/O burst " << io_burst_time + 4 << "ms";
+                    std::cout << " ==> I/O burst " << io_burst_time + 8 << "ms";
                 }
             }
             std::cout << std::endl;
