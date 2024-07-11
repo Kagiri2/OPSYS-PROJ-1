@@ -1,4 +1,5 @@
 #include <iostream>
+#include <math.h>
 #include "next_exp.h"
 
 int main(int argc, char** argv) {
@@ -30,7 +31,7 @@ int main(int argc, char** argv) {
         argument is parameter λ; remember that 1/λ will be the average random value generated, e.g., if λ = 0.01, then the average should
         be appoximately 100. In the exp-random.c example, use the formula shown in the code, i.e., −ln(r)/λ.
     */
-    int lambda = atof(*(argv+4)); // <----- covert to float
+    double lambda = atof(*(argv+4));
     /*
         For the exponential distribution, this command-line argument represents the
         upper bound for valid pseudo-random numbers. This threshold is used to avoid values far
@@ -51,8 +52,12 @@ int main(int argc, char** argv) {
         <<< -- process set (n=3) with 1 CPU-bound process
         <<< -- seed=32; lambda=0.001000; bound=1024
     */
+    srand48(seed);
     std::cout << "<<< PROJECT PART 1" << std::endl;
     std::cout << "<<< -- process set (n=" << num_processes << ") with " << num_cpu_processes << " CPU-bound process" << std::endl;
     std::cout << "<<< -- seed=" << seed << "; lambda=" << lambda << "; bound=" << upper_bound << std::endl;
 
+    std::cout << "ARRIVAL TIME: " << next_exp(seed, upper_bound, lambda) << std::endl;
+    std::cout << ceil(drand48() * 32) << std::endl;
+    
 }  
