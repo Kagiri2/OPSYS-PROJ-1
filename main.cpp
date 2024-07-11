@@ -30,7 +30,7 @@ int main(int argc, char** argv) {
         argument is parameter λ; remember that 1/λ will be the average random value generated, e.g., if λ = 0.01, then the average should
         be appoximately 100. In the exp-random.c example, use the formula shown in the code, i.e., −ln(r)/λ.
     */
-    int lambda = atof(*(argv+4));
+    int lambda = atof(*(argv+4)); // <----- covert to float
     /*
         For the exponential distribution, this command-line argument represents the
         upper bound for valid pseudo-random numbers. This threshold is used to avoid values far
@@ -45,6 +45,14 @@ int main(int argc, char** argv) {
         std::cout << "ERROR: " << "usuage <num_processes> <num_cpu_processes> <seed> <lambda> <upper_bound>" << std::endl;
     }
 
-    std::cout << num_processes << " " << num_cpu_processes << " " << seed << " " << lambda << " " << upper_bound << "" << std::endl;
+    /*
+        bash$ ./a.out 3 1 32 0.001 1024
+        <<< PROJECT PART I
+        <<< -- process set (n=3) with 1 CPU-bound process
+        <<< -- seed=32; lambda=0.001000; bound=1024
+    */
+    std::cout << "<<< PROJECT PART 1" << std::endl;
+    std::cout << "<<< -- process set (n=" << num_processes << ") with " << num_cpu_processes << " CPU-bound process" << std::endl;
+    std::cout << "<<< -- seed=" << seed << "; lambda=" << lambda << "; bound=" << upper_bound << std::endl;
 
 }  
