@@ -36,17 +36,15 @@ void print_processes(const std::vector<Process>& processes) {
         for (std::vector<std::pair<int, int>>::const_iterator burst = cpu_bursts.begin(); burst != cpu_bursts.end(); ++burst) {
             int cpu_burst_time = burst->first;
             int io_burst_time = burst->second;
-
-            if (is_cpu_bound) {
-                std::cout << "==> CPU burst " << cpu_burst_time + 4 << "ms";
-                if (io_burst_time > 0) {
-                    std::cout << " ==> I/O burst " << io_burst_time + 1 << "ms";
-                }
-            } else {
-                std::cout << "==> CPU burst " << cpu_burst_time + 1 << "ms";
-                if (io_burst_time > 0) {
-                    std::cout << " ==> I/O burst " << io_burst_time + 8 << "ms";
-                }
+            std::cout << "==> CPU burst ";
+            
+            if (is_cpu_bound) std::cout << cpu_burst_time + 4 << "ms";
+            else std::cout << cpu_burst_time + 1 << "ms";
+            
+            if (burst != cpu_bursts.end() - 1) { 
+                std::cout << " ==> I/O burst ";
+                if (is_cpu_bound) std::cout << io_burst_time + 1 << "ms";
+                else std::cout << io_burst_time + 8 << "ms";
             }
             std::cout << std::endl;
         }
