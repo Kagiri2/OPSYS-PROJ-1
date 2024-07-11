@@ -18,8 +18,7 @@ int CPU::getCPUBurstTime(int seed, int upper_bound, double lambda, bool is_cpu_b
 
 int CPU::getIOTime(int seed, int upper_bound, double lambda, bool is_cpu_bound) {
     int io_time = ceil(next_exp(seed, upper_bound, lambda));
-    if (is_cpu_bound) io_time = ceil(io_time / 8.0);
-    else io_time *= 8;
+    if (!is_cpu_bound) io_time *= 8;
 
     return io_time;
 }
