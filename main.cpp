@@ -1,6 +1,59 @@
 #include <iostream>
-#include <math.h>
+#include <vector>
+#include <iomanip>
+#include "process.h"
 #include "next_exp.h"
+
+std::vector<Process> generate_processes(int n, int ncpu, int seed, double lambda, int upper_bound) {
+    std::vector<Process> processes;
+    CPU cpu;
+
+    for (int i = 0; i < n; i++) {
+        std::string pid = std::string(1, 'A' + i / 10) + std::to_string(i % 10);
+        bool is_cpu_bound = i < ncpu;
+        int arrival_time = cpu.getArrivalTime(seed, upper_bound, lambda);
+
+        Process p(pid, arrival_time, is_cpu_bound);
+        p.generate_bursts(seed, upper_bound, lambda);
+        processes.push_back(p);
+    }
+
+    return processes;
+}
+
+void print_processes(const std::vector<Process>& processes) {
+    for (std::vector<Process>::const_iterator process = processes.begin(); process != processes.end(); ++process) {
+        bool is_cpu_bound = process->is_cpu_bound_process();
+        if (is_cpu_bound) {
+            std::cout << "CPU-bound process ";
+        } else {
+            std::cout << "I/O-bound process ";
+        }
+        std::cout << process->get_pid() << ": arrival time " << process->get_arrival_time() << "ms; "
+                  << process->get_num_bursts() << " CPU bursts:" << std::endl;
+
+        const std::vector<std::pair<int, int>>& cpu_bursts = process->get_cpu_bursts();
+        for (std::vector<std::pair<int, int>>::const_iterator burst = cpu_bursts.begin(); burst != cpu_bursts.end(); ++burst) {
+            int cpu_burst_time = burst->first;
+            int io_burst_time = burst->second;
+
+            if (is_cpu_bound) {
+                std::cout << "==> CPU burst " << cpu_burst_time + 4 << "ms";
+                if (io_burst_time > 0) {
+                    std::cout << " ==> I/O burst " << io_burst_time + 1 << "ms";
+                }
+            } else {
+                std::cout << "==> CPU burst " << cpu_burst_time + 1 << "ms";
+                if (io_burst_time > 0) {
+                    std::cout << " ==> I/O burst " << io_burst_time + 4 << "ms";
+                }
+            }
+            std::cout << std::endl;
+        }
+        std::cout << std::endl;
+    }
+}
+
 
 int main(int argc, char** argv) {
     /*
@@ -46,18 +99,15 @@ int main(int argc, char** argv) {
         std::cout << "ERROR: " << "usuage <num_processes> <num_cpu_processes> <seed> <lambda> <upper_bound>" << std::endl;
     }
 
-    /*
-        bash$ ./a.out 3 1 32 0.001 1024
-        <<< PROJECT PART I
-        <<< -- process set (n=3) with 1 CPU-bound process
-        <<< -- seed=32; lambda=0.001000; bound=1024
-    */
     srand48(seed);
-    std::cout << "<<< PROJECT PART 1" << std::endl;
-    std::cout << "<<< -- process set (n=" << num_processes << ") with " << num_cpu_processes << " CPU-bound process" << std::endl;
-    std::cout << "<<< -- seed=" << seed << "; lambda=" << lambda << "; bound=" << upper_bound << std::endl;
 
-    std::cout << "ARRIVAL TIME: " << next_exp(seed, upper_bound, lambda) << std::endl;
-    std::cout << ceil(drand48() * 32) << std::endl;
-    
-}  
+    std::cout << "<<< PROJECT PART I" << std::endl;
+    std::cout << "<<< -- process set (n=" << num_processes << ") with " << num_cpu_processes << " CPU-bound process" << std::endl;
+    std::cout << "<<< -- seed=" << seed << "; lambda=" << std::fixed << std::setprecision(6) << lambda << "; bound=" << upper_bound << std::endl;
+    std::cout << std::endl;
+
+    std::vector<Process> processes = generate_processes(num_processes, num_cpu_processes, seed, lambda, upper_bound);
+    print_processes(processes);
+
+    return 0;
+}

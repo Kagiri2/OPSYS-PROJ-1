@@ -5,10 +5,10 @@
 
 class CPU {
     public:
-        int getArrivalTime();
+        int getArrivalTime(int seed, int upper_bound, double lambda);
         int getCPUBurst();
-        int getCPUBurstTime();
-        int getIOTime();
+        int getCPUBurstTime(int seed, int upper_bound, double lambda, bool is_cpu_bound);
+        int getIOTime(int seed, int upper_bound, double lambda, bool is_cpu_bound) ;
     private:
 
 };
