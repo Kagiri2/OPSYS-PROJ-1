@@ -114,13 +114,13 @@ int main(int argc, char** argv) {
     //create simout
 
     ofile << "-- number of processes: " << num_processes << endl;
-    ofile << "-- number of CPU-Bound processes: " << num_cpu_processes <<endl;
+    ofile << "-- number of CPU-Bound processes: " << num_cpu_processes << endl;
     ofile << "-- number of I/O-Bound processes: " << num_processes - num_cpu_processes;
     ofile << "-- CPU-Bound average CPU burst time: " << " ms" <<endl;
-    ofile << "-- CPU-Bound average CPU burst time: " << " ms" <<endl;
+    ofile << "-- I/O-Bound average CPU burst time: " << " ms" <<endl;
     ofile << "-- overall average CPU burst time: " << " ms" << endl;
     ofile << "-- CPU-Bound average I/O burst time: " << " ms" <<endl;
-    ofile << "-- CPU-Bound average I/O burst time: " << " ms" <<endl;
+    ofile << "-- I/O-Bound average I/O burst time: " << " ms" <<endl;
     ofile << "-- overall average I/O burst time: " << " ms" << endl;
 
 
