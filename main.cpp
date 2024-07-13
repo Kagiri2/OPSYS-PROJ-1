@@ -138,7 +138,7 @@ int main(int argc, char** argv) {
     ofile << std::setprecision(3) <<"-- overall average CPU burst time: " << (t.get_ccbt + t.get_icbt)/num_processes << " ms" << endl;
     ofile << std::setprecision(3) <<"-- CPU-Bound average I/O burst time: " << t.get_cibt/num_cpu_processes << " ms" <<endl;
     ofile << std::setprecision(3) <<"-- I/O-Bound average I/O burst time: " << t.get_iibt/(num_processes - num_cpu_processes) << " ms" <<endl;
-    ofile << std::setprecision(3) <<"-- overall average I/O burst time: " << (t.get_ccbt + t.get_icbt)/num_processes << " ms" << endl;
+    ofile << std::setprecision(3) <<"-- overall average I/O burst time: " << (t.get_cibt + t.get_iibt)/num_processes << " ms" << endl;
 
 
 
