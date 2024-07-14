@@ -19,3 +19,16 @@ void Totaller::inc_cibt(int amt){
 void Totaller::inc_iibt(int amt){
 	totaliibt += amt;
 }
+
+void Totaller::inc_ccbtn(){
+	ccbtn ++;
+}
+void Totaller::inc_icbtn(){
+	icbtn ++;
+}
+void Totaller::inc_cibtn(){
+	cibtn ++;
+}
+void Totaller::inc_iibtn(){
+	iibtn ++;
+}
