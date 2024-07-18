@@ -1,0 +1,4 @@
+x is 319.338344
+minimum value: 319.338344
+maximum value: 319.338344
+average value: 319.338344
