@@ -1,8 +1,12 @@
 #include <iostream>
 #include <vector>
 #include <iomanip>
+#include <fstream>
 #include "process.h"
 #include "next_exp.h"
+#include "totaller.h"
+
+
 
 std::vector<Process> generate_processes(int n, int ncpu, int seed, double lambda, int upper_bound) {
     std::vector<Process> processes;
@@ -21,7 +25,7 @@ std::vector<Process> generate_processes(int n, int ncpu, int seed, double lambda
     return processes;
 }
 
-void print_processes(const std::vector<Process>& processes) {
+void print_processes(const std::vector<Process>& processes, Totaller tot) {
     for (std::vector<Process>::const_iterator process = processes.begin(); process != processes.end(); ++process) {
         bool is_cpu_bound = process->is_cpu_bound_process();
         if (is_cpu_bound) {
@@ -36,17 +40,32 @@ void print_processes(const std::vector<Process>& processes) {
         for (std::vector<std::pair<int, int>>::const_iterator burst = cpu_bursts.begin(); burst != cpu_bursts.end(); ++burst) {
             int cpu_burst_time = burst->first;
             int io_burst_time = burst->second;
+            std::cout << "==> CPU burst ";
+            
+            if (is_cpu_bound){
+                std::cout << cpu_burst_time + 4 << "ms";
+                tot.inc_ccbt(cpu_burst_time + 4);
+                tot.inc_ccbtn();
+            } 
 
-            if (is_cpu_bound) {
-                std::cout << "==> CPU burst " << cpu_burst_time + 4 << "ms";
-                if (io_burst_time > 0) {
-                    std::cout << " ==> I/O burst " << io_burst_time + 1 << "ms";
-                }
-            } else {
-                std::cout << "==> CPU burst " << cpu_burst_time + 1 << "ms";
-                if (io_burst_time > 0) {
-                    std::cout << " ==> I/O burst " << io_burst_time + 8 << "ms";
-                }
+            else{
+                std::cout << cpu_burst_time + 1 << "ms";
+                tot.inc_icbt(cpu_burst_time + 1);
+                tot.inc_ccbtn();
+            } 
+            
+            if (burst != cpu_bursts.end() - 1) { 
+                std::cout << " ==> I/O burst ";
+                if (is_cpu_bound){
+                    std::cout << io_burst_time + 1 << "ms";
+                    tot.inc_cibt(io_burst_time + 1);
+                    tot.inc_cibtn();
+                } 
+                else{
+                   std::cout << io_burst_time + 8 << "ms";
+                   tot.inc_iibt(io_burst_time + 8); 
+                   tot.inc_iibtn();
+                } 
             }
             std::cout << std::endl;
         }
@@ -99,6 +118,7 @@ int main(int argc, char** argv) {
         std::cout << "ERROR: " << "usuage <num_processes> <num_cpu_processes> <seed> <lambda> <upper_bound>" << std::endl;
     }
 
+    Totaller t;
     srand48(seed);
 
     std::cout << "<<< PROJECT PART I" << std::endl;
@@ -107,7 +127,26 @@ int main(int argc, char** argv) {
     std::cout << std::endl;
 
     std::vector<Process> processes = generate_processes(num_processes, num_cpu_processes, seed, lambda, upper_bound);
-    print_processes(processes);
+    print_processes(processes, t);
+
+    //file output
+    ofstream ofile("simout.txt");
+
+    //create simout
+
+    ofile << "-- number of processes: " << num_processes << endl;
+    ofile << "-- number of CPU-Bound processes: " << num_cpu_processes << endl;
+    ofile << "-- number of I/O-Bound processes: " << num_processes - num_cpu_processes;
+    ofile << std::setprecision(3) << "-- CPU-Bound average CPU burst time: " << t.get_ccbt()/t.get_ccbtn() << " ms" <<endl;
+    ofile << std::setprecision(3) <<"-- I/O-Bound average CPU burst time: " << t.get_icbt()/t.get_icbtn() << " ms" <<endl;
+    ofile << std::setprecision(3) <<"-- overall average CPU burst time: " << (t.get_ccbt() + t.get_icbt())/(t.get_ccbtn()+t.get_icbtn()) << " ms" << endl;
+    ofile << std::setprecision(3) <<"-- CPU-Bound average I/O burst time: " << t.get_cibt()/t.get_cibtn() << " ms" <<endl;
+    ofile << std::setprecision(3) <<"-- I/O-Bound average I/O burst time: " << t.get_iibt()/t.get_iibtn() << " ms" <<endl;
+    ofile << std::setprecision(3) <<"-- overall average I/O burst time: " << (t.get_cibt() + t.get_iibt())/(t.get_cibtn() + t.get_iibtn()) << " ms" << endl;
+
+
+
+
 
     return 0;
 }
