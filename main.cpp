@@ -25,7 +25,7 @@ std::vector<Process> generate_processes(int n, int ncpu, int seed, double lambda
     return processes;
 }
 
-void print_processes(const std::vector<Process>& processes, Totaller tot) {
+void print_processes(const std::vector<Process>& processes, Totaller& tot) {
     for (std::vector<Process>::const_iterator process = processes.begin(); process != processes.end(); ++process) {
         bool is_cpu_bound = process->is_cpu_bound_process();
         if (is_cpu_bound) {
@@ -34,7 +34,12 @@ void print_processes(const std::vector<Process>& processes, Totaller tot) {
             std::cout << "I/O-bound process ";
         }
         std::cout << process->get_pid() << ": arrival time " << process->get_arrival_time() << "ms; "
-                  << process->get_num_bursts() << " CPU bursts:" << std::endl;
+                  << process->get_num_bursts();
+        if (process->get_num_bursts() == 1) {
+            std::cout << " CPU burst:" << std::endl;
+        } else {
+            std::cout << " CPU bursts:" << std::endl;
+        }
 
         const std::vector<std::pair<int, int>>& cpu_bursts = process->get_cpu_bursts();
         for (std::vector<std::pair<int, int>>::const_iterator burst = cpu_bursts.begin(); burst != cpu_bursts.end(); ++burst) {
@@ -46,9 +51,7 @@ void print_processes(const std::vector<Process>& processes, Totaller tot) {
                 std::cout << cpu_burst_time + 4 << "ms";
                 tot.inc_ccbt(cpu_burst_time + 4);
                 tot.inc_ccbtn();
-            } 
-
-            else{
+            } else{
                 std::cout << cpu_burst_time + 1 << "ms";
                 tot.inc_icbt(cpu_burst_time + 1);
                 tot.inc_ccbtn();
@@ -69,12 +72,18 @@ void print_processes(const std::vector<Process>& processes, Totaller tot) {
             }
             std::cout << std::endl;
         }
-        std::cout << std::endl;
     }
+    std::cout << tot.get_ccbt() << " " << tot.get_ccbtn() << " " << tot.get_cibt() << " " << tot.get_cibtn() << tot.get_icbt() << " " << tot.get_icbtn() << " " << tot.get_iibt() << " " << tot.get_iibtn() << std::endl;
 }
 
 
 int main(int argc, char** argv) {
+
+    if(argc != 6) {
+        std::cout << "ERROR: " << "usuage <num_processes> <num_cpu_processes> <seed> <lambda> <upper_bound>" << std::endl;
+        return 1;
+    }
+
     /*
         Define n as the number of processes to simulate. Process IDs are assigned a
         two-character code consisting of an uppercase letter from A to Z followed by a number from
@@ -114,37 +123,38 @@ int main(int argc, char** argv) {
     */
     int upper_bound = atoi(*(argv+5));
 
-    if(argc != 6) {
-        std::cout << "ERROR: " << "usuage <num_processes> <num_cpu_processes> <seed> <lambda> <upper_bound>" << std::endl;
-    }
-
-    Totaller t;
+    Totaller t = Totaller();
+    std::cout << t.get_ccbt() << " " << t.get_ccbtn() << " " << t.get_cibt() << " " << t.get_cibtn() << t.get_icbt() << " " << t.get_icbtn() << " " << t.get_iibt() << " " << t.get_iibtn() << std::endl;
     srand48(seed);
 
     std::cout << "<<< PROJECT PART I" << std::endl;
-    std::cout << "<<< -- process set (n=" << num_processes << ") with " << num_cpu_processes << " CPU-bound process" << std::endl;
+    std::cout << "<<< -- process set (n=" << num_processes << ") with " << num_cpu_processes; 
+    if(num_cpu_processes == 1) {
+        std::cout << " CPU-bound process" << std::endl;
+    } else {
+        std::cout << " CPU-bound processes" << std::endl;
+    }
     std::cout << "<<< -- seed=" << seed << "; lambda=" << std::fixed << std::setprecision(6) << lambda << "; bound=" << upper_bound << std::endl;
-    std::cout << std::endl;
 
     std::vector<Process> processes = generate_processes(num_processes, num_cpu_processes, seed, lambda, upper_bound);
     print_processes(processes, t);
 
     //file output
-    ofstream ofile("simout.txt");
-
+    std::ofstream ofile;
+    ofile.open("simout.txt");
     //create simout
-
-    ofile << "-- number of processes: " << num_processes << endl;
-    ofile << "-- number of CPU-Bound processes: " << num_cpu_processes << endl;
+    ofile << "-- number of processes: " << num_processes << std::endl;
+    ofile << "-- number of CPU-Bound processes: " << num_cpu_processes << std::endl;
     ofile << "-- number of I/O-Bound processes: " << num_processes - num_cpu_processes;
-    ofile << std::setprecision(3) << "-- CPU-Bound average CPU burst time: " << t.get_ccbt()/t.get_ccbtn() << " ms" <<endl;
-    ofile << std::setprecision(3) <<"-- I/O-Bound average CPU burst time: " << t.get_icbt()/t.get_icbtn() << " ms" <<endl;
-    ofile << std::setprecision(3) <<"-- overall average CPU burst time: " << (t.get_ccbt() + t.get_icbt())/(t.get_ccbtn()+t.get_icbtn()) << " ms" << endl;
-    ofile << std::setprecision(3) <<"-- CPU-Bound average I/O burst time: " << t.get_cibt()/t.get_cibtn() << " ms" <<endl;
-    ofile << std::setprecision(3) <<"-- I/O-Bound average I/O burst time: " << t.get_iibt()/t.get_iibtn() << " ms" <<endl;
-    ofile << std::setprecision(3) <<"-- overall average I/O burst time: " << (t.get_cibt() + t.get_iibt())/(t.get_cibtn() + t.get_iibtn()) << " ms" << endl;
+    ofile << std::setprecision(3) << "\n-- CPU-Bound average CPU burst time: " << t.get_ccbt()/t.get_ccbtn() << " ms" << std::endl;
+    ofile << std::setprecision(3) <<"-- I/O-Bound average CPU burst time: " << t.get_icbt()/t.get_icbtn() << " ms" << std::endl;
+    ofile << std::setprecision(3) <<"-- overall average CPU burst time: " << (t.get_ccbt() + t.get_icbt())/(t.get_ccbtn()+t.get_icbtn()) << " ms" << std::endl;
+    ofile << std::setprecision(3) <<"-- CPU-Bound average I/O burst time: " << t.get_cibt()/t.get_cibtn() << " ms" << std::endl;
+    ofile << std::setprecision(3) <<"-- I/O-Bound average I/O burst time: " << t.get_iibt()/t.get_iibtn() << " ms" << std::endl;
+    ofile << std::setprecision(3) <<"-- overall average I/O burst time: " << (t.get_cibt() + t.get_iibt())/(t.get_cibtn() + t.get_iibtn()) << " ms" << std::endl;
 
-
+    std::cout << (float) t.get_ccbt()/t.get_ccbtn() << std::endl;
+    std::cout << (float) t.get_icbtn() << std::endl;
 
 
 

@@ -1,10 +1,14 @@
 #include "totaller.h"
 
 Totaller::Totaller(){
-	totalccbt = 0;
-	totalicbt = 0;
-	totalcibt = 0;
-    totaliibt = 0;
+	this->totalccbt = 0;
+	this->totalicbt = 0;
+	this->totalcibt = 0;
+    this->totaliibt = 0;
+	this->ccbtn = 0;
+	this->icbtn = 0;
+	this->cibtn = 0;
+	this->iibtn = 0;
 }
 
 void Totaller::inc_ccbt(int amt){
