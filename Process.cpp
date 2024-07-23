@@ -1,4 +1,4 @@
-#include "process.h"
+#include "Process.h"
 
 Process::Process(std::string id, int arrive_time, bool cpu_bound)
     : pid(id), arrival_time(arrive_time), is_cpu_bound(cpu_bound) {}

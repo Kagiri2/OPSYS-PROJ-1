@@ -1,4 +1,4 @@
-#include "cpu.h"
+#include "CPU.h"
 #include <cmath>
 #include <cstdlib>
 

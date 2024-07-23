@@ -3,9 +3,9 @@
 #include <iomanip>
 #include <fstream>
 #include <cmath> 
-#include "process.h"
+#include "Process.h"
 #include "next_exp.h"
-#include "totaller.h"
+#include "Totaller.h"
 
 double ceilhelper(double value) {
     return std::ceil(value * 1000.0) / 1000.0;

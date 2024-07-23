@@ -3,7 +3,7 @@
 
 #include <string>
 #include <vector>
-#include "cpu.h"
+#include "CPU.h"
 
 class Process {
 public:
