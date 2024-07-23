@@ -153,15 +153,35 @@ int main(int argc, char** argv) {
     ofile << "-- number of CPU-bound processes: " << num_cpu_processes << std::endl;
     ofile << "-- number of I/O-bound processes: " << num_processes - num_cpu_processes << std::endl;
     
-    double cpu_bound_avg_cpu = t.get_ccbtn() > 0 ? static_cast<double>(t.get_ccbt()) / t.get_ccbtn() : 0.0;
-    double io_bound_avg_cpu = t.get_icbtn() > 0 ? static_cast<double>(t.get_icbt()) / t.get_icbtn() : 0.0;
-    double overall_avg_cpu = (t.get_ccbtn() + t.get_icbtn()) > 0 ? 
-        static_cast<double>(t.get_ccbt() + t.get_icbt()) / (t.get_ccbtn() + t.get_icbtn()) : 0.0;
-    
-    double cpu_bound_avg_io = t.get_cibtn() > 0 ? static_cast<double>(t.get_cibt()) / t.get_cibtn() : 0.0;
-    double io_bound_avg_io = t.get_iibtn() > 0 ? static_cast<double>(t.get_iibt()) / t.get_iibtn() : 0.0;
-    double overall_avg_io = (t.get_cibtn() + t.get_iibtn()) > 0 ? 
-        static_cast<double>(t.get_cibt() + t.get_iibt()) / (t.get_cibtn() + t.get_iibtn()) : 0.0;
+    double cpu_bound_avg_cpu = 0.0;
+    if (t.get_ccbtn() > 0) {
+        cpu_bound_avg_cpu = static_cast<double>(t.get_ccbt()) / t.get_ccbtn();
+    }
+
+    double io_bound_avg_cpu = 0.0;
+    if (t.get_icbtn() > 0) {
+        io_bound_avg_cpu = static_cast<double>(t.get_icbt()) / t.get_icbtn();
+    }
+
+    double overall_avg_cpu = 0.0;
+    if (t.get_ccbtn() + t.get_icbtn() > 0) {
+        overall_avg_cpu = static_cast<double>(t.get_ccbt() + t.get_icbt()) / (t.get_ccbtn() + t.get_icbtn());
+    }
+
+    double cpu_bound_avg_io = 0.0;
+    if (t.get_cibtn() > 0) {
+        cpu_bound_avg_io = static_cast<double>(t.get_cibt()) / t.get_cibtn();
+    }
+
+    double io_bound_avg_io = 0.0;
+    if (t.get_iibtn() > 0) {
+        io_bound_avg_io = static_cast<double>(t.get_iibt()) / t.get_iibtn();
+    }
+
+    double overall_avg_io = 0.0;
+    if (t.get_cibtn() + t.get_iibtn() > 0) {
+        overall_avg_io = static_cast<double>(t.get_cibt() + t.get_iibt()) / (t.get_cibtn() + t.get_iibtn());
+    }
 
     ofile << std::fixed << std::setprecision(3);
     ofile << "-- CPU-bound average CPU burst time: " << ceilhelper(cpu_bound_avg_cpu) << " ms" << std::endl;
