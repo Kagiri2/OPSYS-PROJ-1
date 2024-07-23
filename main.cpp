@@ -2,11 +2,14 @@
 #include <vector>
 #include <iomanip>
 #include <fstream>
+#include <cmath> 
 #include "process.h"
 #include "next_exp.h"
 #include "totaller.h"
 
-
+double ceilhelper(double value) {
+    return std::ceil(value * 1000.0) / 1000.0;
+}
 
 std::vector<Process> generate_processes(int n, int ncpu, int seed, double lambda, int upper_bound) {
     std::vector<Process> processes;
@@ -35,6 +38,7 @@ void print_processes(const std::vector<Process>& processes, Totaller& tot) {
         }
         std::cout << process->get_pid() << ": arrival time " << process->get_arrival_time() << "ms; "
                   << process->get_num_bursts();
+        
         if (process->get_num_bursts() == 1) {
             std::cout << " CPU burst:" << std::endl;
         } else {
@@ -45,35 +49,35 @@ void print_processes(const std::vector<Process>& processes, Totaller& tot) {
         for (std::vector<std::pair<int, int>>::const_iterator burst = cpu_bursts.begin(); burst != cpu_bursts.end(); ++burst) {
             int cpu_burst_time = burst->first;
             int io_burst_time = burst->second;
-            std::cout << "==> CPU burst ";
-            
-            if (is_cpu_bound){
-                std::cout << cpu_burst_time + 4 << "ms";
-                tot.inc_ccbt(cpu_burst_time + 4);
+
+            if (is_cpu_bound) {
+                cpu_burst_time += 4;
+                tot.inc_ccbt(cpu_burst_time);
                 tot.inc_ccbtn();
-            } else{
-                std::cout << cpu_burst_time + 1 << "ms";
-                tot.inc_icbt(cpu_burst_time + 1);
-                tot.inc_ccbtn();
-            } 
-            
-            if (burst != cpu_bursts.end() - 1) { 
-                std::cout << " ==> I/O burst ";
-                if (is_cpu_bound){
-                    std::cout << io_burst_time + 1 << "ms";
-                    tot.inc_cibt(io_burst_time + 1);
+                std::cout << "==> CPU burst " << cpu_burst_time << "ms";
+            } else {
+                cpu_burst_time += 1;
+                tot.inc_icbt(cpu_burst_time);
+                tot.inc_icbtn();
+                std::cout << "==> CPU burst " << cpu_burst_time << "ms";
+            }
+
+            if (burst != cpu_bursts.end() - 1) {  // Not the last burst
+                if (is_cpu_bound) {
+                    io_burst_time += 1;
+                    tot.inc_cibt(io_burst_time);
                     tot.inc_cibtn();
-                } 
-                else{
-                   std::cout << io_burst_time + 8 << "ms";
-                   tot.inc_iibt(io_burst_time + 8); 
-                   tot.inc_iibtn();
-                } 
+                    std::cout << " ==> I/O burst " << io_burst_time << "ms";
+                } else {
+                    io_burst_time += 8;
+                    tot.inc_iibt(io_burst_time);
+                    tot.inc_iibtn();
+                    std::cout << " ==> I/O burst " << io_burst_time << "ms";
+                }
             }
             std::cout << std::endl;
         }
     }
-    std::cout << tot.get_ccbt() << " " << tot.get_ccbtn() << " " << tot.get_cibt() << " " << tot.get_cibtn() << tot.get_icbt() << " " << tot.get_icbtn() << " " << tot.get_iibt() << " " << tot.get_iibtn() << std::endl;
 }
 
 
@@ -124,7 +128,6 @@ int main(int argc, char** argv) {
     int upper_bound = atoi(*(argv+5));
 
     Totaller t = Totaller();
-    std::cout << t.get_ccbt() << " " << t.get_ccbtn() << " " << t.get_cibt() << " " << t.get_cibtn() << t.get_icbt() << " " << t.get_icbtn() << " " << t.get_iibt() << " " << t.get_iibtn() << std::endl;
     srand48(seed);
 
     std::cout << "<<< PROJECT PART I" << std::endl;
@@ -140,23 +143,35 @@ int main(int argc, char** argv) {
     print_processes(processes, t);
 
     //file output
-    std::ofstream ofile;
-    ofile.open("simout.txt");
-    //create simout
+    std::ofstream ofile("simout.txt");
+    if (!ofile.is_open()) {
+        std::cerr << "Error: Unable to open simout.txt for writing." << std::endl;
+        return 1;
+    }
+
     ofile << "-- number of processes: " << num_processes << std::endl;
-    ofile << "-- number of CPU-Bound processes: " << num_cpu_processes << std::endl;
-    ofile << "-- number of I/O-Bound processes: " << num_processes - num_cpu_processes;
-    ofile << std::setprecision(3) << "\n-- CPU-Bound average CPU burst time: " << t.get_ccbt()/t.get_ccbtn() << " ms" << std::endl;
-    ofile << std::setprecision(3) <<"-- I/O-Bound average CPU burst time: " << t.get_icbt()/t.get_icbtn() << " ms" << std::endl;
-    ofile << std::setprecision(3) <<"-- overall average CPU burst time: " << (t.get_ccbt() + t.get_icbt())/(t.get_ccbtn()+t.get_icbtn()) << " ms" << std::endl;
-    ofile << std::setprecision(3) <<"-- CPU-Bound average I/O burst time: " << t.get_cibt()/t.get_cibtn() << " ms" << std::endl;
-    ofile << std::setprecision(3) <<"-- I/O-Bound average I/O burst time: " << t.get_iibt()/t.get_iibtn() << " ms" << std::endl;
-    ofile << std::setprecision(3) <<"-- overall average I/O burst time: " << (t.get_cibt() + t.get_iibt())/(t.get_cibtn() + t.get_iibtn()) << " ms" << std::endl;
+    ofile << "-- number of CPU-bound processes: " << num_cpu_processes << std::endl;
+    ofile << "-- number of I/O-bound processes: " << num_processes - num_cpu_processes << std::endl;
+    
+    double cpu_bound_avg_cpu = t.get_ccbtn() > 0 ? static_cast<double>(t.get_ccbt()) / t.get_ccbtn() : 0.0;
+    double io_bound_avg_cpu = t.get_icbtn() > 0 ? static_cast<double>(t.get_icbt()) / t.get_icbtn() : 0.0;
+    double overall_avg_cpu = (t.get_ccbtn() + t.get_icbtn()) > 0 ? 
+        static_cast<double>(t.get_ccbt() + t.get_icbt()) / (t.get_ccbtn() + t.get_icbtn()) : 0.0;
+    
+    double cpu_bound_avg_io = t.get_cibtn() > 0 ? static_cast<double>(t.get_cibt()) / t.get_cibtn() : 0.0;
+    double io_bound_avg_io = t.get_iibtn() > 0 ? static_cast<double>(t.get_iibt()) / t.get_iibtn() : 0.0;
+    double overall_avg_io = (t.get_cibtn() + t.get_iibtn()) > 0 ? 
+        static_cast<double>(t.get_cibt() + t.get_iibt()) / (t.get_cibtn() + t.get_iibtn()) : 0.0;
 
-    std::cout << (float) t.get_ccbt()/t.get_ccbtn() << std::endl;
-    std::cout << (float) t.get_icbtn() << std::endl;
+    ofile << std::fixed << std::setprecision(3);
+    ofile << "-- CPU-bound average CPU burst time: " << ceilhelper(cpu_bound_avg_cpu) << " ms" << std::endl;
+    ofile << "-- I/O-bound average CPU burst time: " << ceilhelper(io_bound_avg_cpu) << " ms" << std::endl;
+    ofile << "-- overall average CPU burst time: " << ceilhelper(overall_avg_cpu) << " ms" << std::endl;
+    ofile << "-- CPU-bound average I/O burst time: " << ceilhelper(cpu_bound_avg_io) << " ms" << std::endl;
+    ofile << "-- I/O-bound average I/O burst time: " << ceilhelper(io_bound_avg_io) << " ms" << std::endl;
+    ofile << "-- overall average I/O burst time: " << ceilhelper(overall_avg_io) << " ms" << std::endl;
 
-
+    ofile.close();
 
     return 0;
 }
