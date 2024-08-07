@@ -131,8 +131,10 @@ void print_processes(const std::vector<Process>& processes, Totaller& tot) {
                 if (p.get_arrival_time() == current_time) {
                     //std::cout << "ARRIVAL time " << current_time << std::endl;
                     ready_queue.push_back(&p);
-                    std::cout << "time " << current_time << "ms: Process " << p.get_pid() 
+                    if(current_time < 10000) {
+                        std::cout << "time " << current_time << "ms: Process " << p.get_pid() 
                             << " arrived; added to ready queue [Q " << print_queue(ready_queue) << "]" << std::endl;
+                    }
                 }
             }
 
@@ -141,8 +143,11 @@ void print_processes(const std::vector<Process>& processes, Totaller& tot) {
                 if (p.is_io_completed(current_time)) {
                     //std::cout << "IO time " << current_time << std::endl;
                     ready_queue.push_back(&p);
-                    std::cout << "time " << current_time << "ms: Process " << p.get_pid() 
+
+                    if(current_time < 10000) {
+                        std::cout << "time " << current_time << "ms: Process " << p.get_pid() 
                             << " completed I/O; added to ready queue [Q " << print_queue(ready_queue) << "]" << std::endl;
+                    }
                 }
             }
 
@@ -190,8 +195,7 @@ void print_processes(const std::vector<Process>& processes, Totaller& tot) {
                                 << current_process->get_io_completion_time()
                                 << "ms [Q " << print_queue(ready_queue) << "]" << std::endl;
                         switching_out = true;
-                        context_switch_remaining = t_cs / 2;
-                        current_time += t_cs - 1;
+                        context_switch_remaining = t_cs / 2 + 1;
                     }
                 }
             }
