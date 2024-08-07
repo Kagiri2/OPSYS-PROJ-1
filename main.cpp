@@ -7,10 +7,11 @@
 #include "next_exp.h"
 #include "Totaller.h"
 #include <queue>
+#include <list>
 
 
 void simulate_fcfs(std::vector<Process>& processes, int t_cs);
-void simulate_sjf(std::vector<Process>& processes, int t_cs, double alpha);
+void simulate_sjf(std::vector<Process>& processes, int t_cs, double alpha, double lambda);
 void simulate_srt(std::vector<Process>& processes, int t_cs, double alpha);
 void simulate_rr(std::vector<Process>& processes, int t_cs, int t_slice);
 double estimate_next_burst(double previous_estimate, int actual_burst, double alpha);
@@ -106,6 +107,15 @@ void print_processes(const std::vector<Process>& processes, Totaller& tot) {
 }
 
     std::string print_queue(const std::vector<Process*>& q) {
+        if (q.empty()) return "empty";
+        std::string result;
+        for (const Process* p : q) {
+            result += p->get_pid() + " ";
+        }
+        return result.substr(0, result.length() - 1);  // Remove trailing space
+    }
+
+    std::string print_queue(const std::list<Process*>& q) {
         if (q.empty()) return "empty";
         std::string result;
         for (const Process* p : q) {
@@ -220,9 +230,148 @@ void print_processes(const std::vector<Process>& processes, Totaller& tot) {
         std::cout << "time " << current_time << "ms: Simulator ended for FCFS [Q " << print_queue(ready_queue) << "]" << std::endl;
     }
 
-    void simulate_sjf(std::vector<Process>& processes, int t_cs, double alpha) {
+    void simulate_sjf(std::vector<Process>& processes, int t_cs, double alpha, double lambda) {
         // Similar structure to FCFS, but use get_next_process_sjf for selecting the next process
-        
+        int current_time = 0;
+        std::list<Process*> ready_queue;
+        Process* current_process = nullptr;
+        int context_switch_remaining = 0;
+        bool switching_out = false;
+
+        std::cout << "time 0ms: Simulator started for SJF [Q empty]" << std::endl;
+
+        while (true) {
+
+            // Check for new arrivals
+            for (Process& p : processes) {
+                if (p.get_arrival_time() == current_time) {
+                    //std::cout << "ARRIVAL time " << current_time << std::endl;
+                    if(p.get_tau() == 0) {
+                        p.set_tau(1/lambda);
+                    }
+                    if(ready_queue.empty()) {
+                        ready_queue.push_back(&p);
+                    } else {
+                        bool added = false;
+                        for(std::list<Process*>::iterator itr = ready_queue.begin(); itr != ready_queue.end(); itr++ ) {
+                            if(p.get_tau() < (*itr)->get_tau()) {
+                                added = true;
+                                ready_queue.insert(itr, &p);
+                                break;
+                            }
+                        }
+                        if(!added) {
+                            ready_queue.push_back(&p);
+                        }
+                    }
+                    if(current_time < 10000) {
+                        std::cout << "time " << current_time << "ms: Process " << p.get_pid() 
+                            << " (tau " << p.get_tau() << "ms)" << " arrived; added to ready queue [Q " << print_queue(ready_queue) << "]" << std::endl;
+                    }
+                }
+            }
+
+            // Check for I/O completion
+            for (Process& p : processes) {
+                if (p.is_io_completed(current_time)) {
+                    //std::cout << "IO time " << current_time << std::endl;
+                    if(ready_queue.empty()) {
+                        ready_queue.push_back(&p);
+                    } else {
+                        bool added = false;
+                        for(std::list<Process*>::iterator itr = ready_queue.begin(); itr != ready_queue.end(); itr++ ) {
+                            if(p.get_tau() < (*itr)->get_tau()) {
+                                added = true;
+                                ready_queue.insert(itr, &p);
+                                break;
+                            }
+                        }
+                        if(!added) {
+                            ready_queue.push_back(&p);
+                        }
+                    }
+                    
+                    if(current_time < 10000) {
+                        std::cout << "time " << current_time << "ms: Process " << p.get_pid() 
+                            << " (tau " << p.get_tau() << "ms)" << " completed I/O; added to ready queue [Q " << print_queue(ready_queue) << "]" << std::endl;
+                    }
+                }
+            }
+
+            // Handle context switch
+            if (context_switch_remaining > 0) {
+                context_switch_remaining--;
+                if (context_switch_remaining == 0) {
+                    // if we are done switching OUT a process (aka CPU is idle)
+                    if (switching_out) {
+                        switching_out = false;
+                        current_process = nullptr;
+                    } else if (current_process != nullptr) {
+                        // the CPU isn't idle and we start using it
+                        int burst_time = current_process->get_next_cpu_burst();
+                        if(current_time < 10000) {
+                            std::cout << "time " << current_time << "ms: Process " << current_process->get_pid() 
+                                << " (tau " << current_process->get_tau() << "ms)" << " started using the CPU for " << burst_time << "ms burst [Q " 
+                                << print_queue(ready_queue) << "]" << std::endl;
+                        }
+                    }
+                }
+            }
+
+            // Start new process if CPU is idle
+            if (current_process == nullptr && !ready_queue.empty() && context_switch_remaining == 0) {
+                current_process = ready_queue.front();
+                ready_queue.erase(ready_queue.begin());
+                context_switch_remaining = t_cs / 2;
+            }
+
+            // Process execution
+            if (current_process != nullptr && context_switch_remaining == 0) {
+                current_process->preempt(1); // decreases the burst time by 1
+                if (current_process->get_remaining_time() == 0) {
+                    int remaining_bursts = current_process->get_num_bursts() - current_process->get_current_burst_index() - 1;
+                    if (remaining_bursts == 0) {
+                        std::cout << "time " << current_time + 1 << "ms: Process " << current_process->get_pid() 
+                                << " terminated [Q " << print_queue(ready_queue) << "]" << std::endl;
+                        switching_out = true;
+                        context_switch_remaining = t_cs / 2;
+                    } else {
+                        if(current_time < 10000) {
+                            std::cout << "time " << current_time + 1 << "ms: Process " << current_process->get_pid() 
+                                << " (tau " << current_process->get_tau() << "ms)" << " completed a CPU burst; " << remaining_bursts 
+                                << (remaining_bursts == 1 ? " burst" : " bursts") << " to go [Q " << print_queue(ready_queue) << "]" << std::endl;
+                        }
+                        
+                        // recalculate tau
+                        int old_tau = current_process->get_tau();
+                        current_process->set_tau(std::ceil(alpha * current_process->get_cpu_bursts()[current_process->get_current_burst_index()].first + (1-alpha) * old_tau));
+
+                        if(current_time < 10000) {
+                            std::cout << "time " << current_time + 1 << "ms: Recalculated tau for process " << current_process->get_pid() << ": old tau " << old_tau << "ms ==> new tau " << current_process->get_tau() << "ms [Q " << print_queue(ready_queue) << "]" << std::endl;
+                        }
+
+                        int io_time = current_process->start_io(current_time + 1);
+                        if(current_time < 10000) {
+                            std::cout << "time " << current_time + 1 << "ms: Process " << current_process->get_pid() 
+                                << " switching out of CPU; blocking on I/O until time " 
+                                << current_process->get_io_completion_time()
+                                << "ms [Q " << print_queue(ready_queue) << "]" << std::endl;
+                        }
+                        switching_out = true;
+                        context_switch_remaining = t_cs / 2 + 1;
+                    }
+                }
+            }
+
+            current_time++;
+
+            // Check if simulation is complete
+            if (all_processes_completed(processes) && ready_queue.empty() && current_process == nullptr && context_switch_remaining == 0) {
+                break;
+            }
+        }
+
+        std::cout << "time " << current_time << "ms: Simulator ended for FCFS [Q " << print_queue(ready_queue) << "]" << std::endl;
     }
 
     void simulate_srt(std::vector<Process>& processes, int t_cs, double alpha) {
@@ -381,17 +530,17 @@ int main(int argc, char** argv) {
     
     std::cout << "\n<<< PROJECT PART II" << std::endl;
     std::cout << std::fixed << std::setprecision(2) << "<<< -- t_cs=" << t_cs << "ms; alpha=" << alpha << "; t_slice=" << t_slice << "ms" << std::endl;
-
+    /*
     print_algorithm_start("FCFS");
     simulate_fcfs(processes, t_cs);
     print_algorithm_end("FCFS");
     reset_processes(processes);
-    /*
+    */
     print_algorithm_start("SJF");
-    simulate_sjf(processes, t_cs, alpha);
+    simulate_sjf(processes, t_cs, alpha, lambda);
     print_algorithm_end("SJF");
     reset_processes(processes);
-    */
+    /**/
     print_algorithm_start("SRT");
     simulate_srt(processes, t_cs, alpha);
     print_algorithm_end("SRT");

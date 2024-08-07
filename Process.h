@@ -34,6 +34,8 @@ public:
     double get_burst_estimate() const { return burst_estimate; }
     int get_remaining_time() const { return remaining_time; }
     void preempt(int time_used);
+    int get_tau();
+    void set_tau(int new_tau);
 
 private:
     std::string pid;
@@ -48,6 +50,7 @@ private:
     int response_time;
     double burst_estimate;
     int remaining_time;
+    int tau;
 };
 
 #endif

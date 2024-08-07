@@ -4,7 +4,7 @@ Process::Process(std::string id, int arrive_time, bool cpu_bound)
     : pid(id), arrival_time(arrive_time), is_cpu_bound(cpu_bound),
       current_burst_index(0), io_completion_time(0),
       waiting_time(0), turnaround_time(0), response_time(-1),
-      burst_estimate(0), remaining_time(0) {}
+      burst_estimate(0), remaining_time(0), tau(0) {}
 
 void Process::generate_bursts(int seed, int upper_bound, double lambda, bool is_cpu_bound) {
     int num_bursts = cpu.getCPUBurst();
@@ -81,4 +81,14 @@ void Process::preempt(int time_used) {
     //         remaining_time = 0;
     //     }
     // }
+}
+
+int Process::get_tau()
+{
+    return tau;
+}
+
+void Process::set_tau(int new_tau)
+{
+    tau = new_tau;
 }
