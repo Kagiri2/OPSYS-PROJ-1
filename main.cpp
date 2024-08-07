@@ -7,6 +7,7 @@
 #include "next_exp.h"
 #include "Totaller.h"
 #include <queue>
+#include <limits>
 
 
 void simulate_fcfs(std::vector<Process>& processes, int t_cs);
@@ -24,7 +25,6 @@ void print_simulation_results(const std::string& algorithm, const std::vector<Pr
 
 // PART 2 OUTPUT FUNCTIONS
 void print_verbose_output(const std::string& event, int time, const Process& process);
-void print_algorithm_start(const std::string& algorithm);
 void print_algorithm_end(const std::string& algorithm);
 
 void calculate_statistics(const std::vector<Process>& processes, int t_cs);
@@ -105,104 +105,104 @@ void print_processes(const std::vector<Process>& processes, Totaller& tot) {
     }
 }
 
-    std::string print_queue(const std::vector<Process*>& q) {
+    std::string print_queue(const std::queue<Process*>& q) {
         if (q.empty()) return "empty";
         std::string result;
-        for (const Process* p : q) {
-            result += p->get_pid() + " ";
+        std::queue<Process*> temp = q;
+        while (!temp.empty()) {
+            result += temp.front()->get_pid() + " ";
+            temp.pop();
         }
         return result.substr(0, result.length() - 1);  // Remove trailing space
     }
 
 
-    // PART 2 FUNCTIONS
     void simulate_fcfs(std::vector<Process>& processes, int t_cs) {
-        int current_time = 0;
-        std::vector<Process*> ready_queue;
-        Process* current_process = nullptr;
-        int context_switch_remaining = 0;
-        bool switching_out = false;
+    int current_time = 0;
+    std::queue<Process*> ready_queue;
+    Process* current_process = nullptr;
+    int context_switch_remaining = 0;
+    bool in_context_switch = false;
 
-        std::cout << "time 0ms: Simulator started for FCFS [Q empty]" << std::endl;
+    std::cout << "time 0ms: Simulator started for FCFS [Q empty]" << std::endl;
 
-        while (true) {
-            // Check for new arrivals
-            for (Process& p : processes) {
-                if (p.get_arrival_time() == current_time) {
-                    ready_queue.push_back(&p);
-                    std::cout << "time " << current_time << "ms: Process " << p.get_pid() 
-                            << " arrived; added to ready queue [Q " << print_queue(ready_queue) << "]" << std::endl;
-                }
-            }
-
-            // Check for I/O completion
-            for (Process& p : processes) {
-                if (p.is_io_completed(current_time)) {
-                    ready_queue.push_back(&p);
-                    std::cout << "time " << current_time << "ms: Process " << p.get_pid() 
-                            << " completed I/O; added to ready queue [Q " << print_queue(ready_queue) << "]" << std::endl;
-                }
-            }
-
-            // Handle context switch
-            if (context_switch_remaining > 0) {
-                context_switch_remaining--;
-                if (context_switch_remaining == 0) {
-                    if (switching_out) {
-                        switching_out = false;
-                        current_process = nullptr;
-                    } else if (current_process != nullptr) {
-                        int burst_time = current_process->get_next_cpu_burst();
-                        std::cout << "time " << current_time << "ms: Process " << current_process->get_pid() 
-                                << " started using the CPU for " << burst_time << "ms burst [Q " 
-                                << print_queue(ready_queue) << "]" << std::endl;
-                    }
-                }
-            }
-
-            // Start new process if CPU is idle
-            if (current_process == nullptr && !ready_queue.empty() && context_switch_remaining == 0) {
-                current_process = ready_queue.front();
-                ready_queue.erase(ready_queue.begin());
-                context_switch_remaining = t_cs / 2;
-            }
-
-            // Process execution
-            if (current_process != nullptr && context_switch_remaining == 0) {
-                current_process->preempt(1);
-                if (current_process->get_remaining_time() == 0) {
-                    int remaining_bursts = current_process->get_num_bursts() - current_process->get_current_burst_index() - 1;
-                    if (remaining_bursts == 0) {
-                        std::cout << "time " << current_time + 1 << "ms: Process " << current_process->get_pid() 
-                                << " terminated [Q " << print_queue(ready_queue) << "]" << std::endl;
-                        switching_out = true;
-                        context_switch_remaining = t_cs / 2;
-                    } else {
-                        std::cout << "time " << current_time + 1 << "ms: Process " << current_process->get_pid() 
-                                << " completed a CPU burst; " << remaining_bursts 
-                                << (remaining_bursts == 1 ? " burst" : " bursts") << " to go [Q " << print_queue(ready_queue) << "]" << std::endl;
-                        
-                        int io_time = current_process->start_io();
-                        std::cout << "time " << current_time + 1 << "ms: Process " << current_process->get_pid() 
-                                << " switching out of CPU; blocking on I/O until time " 
-                                << current_time + 1 + t_cs / 2 + io_time 
-                                << "ms [Q " << print_queue(ready_queue) << "]" << std::endl;
-                        switching_out = true;
-                        context_switch_remaining = t_cs / 2;
-                    }
-                }
-            }
-
-            current_time++;
-
-            // Check if simulation is complete
-            if (all_processes_completed(processes) && ready_queue.empty() && current_process == nullptr && context_switch_remaining == 0) {
-                break;
+    while (true) {
+        // Check for new arrivals
+        for (Process& p : processes) {
+            if (p.get_arrival_time() == current_time && !p.is_completed()) {
+                ready_queue.push(&p);
+                std::cout << "time " << current_time << "ms: Process " << p.get_pid() 
+                        << " arrived; added to ready queue [Q " << print_queue(ready_queue) << "]" << std::endl;
             }
         }
 
-        std::cout << "time " << current_time << "ms: Simulator ended for FCFS [Q " << print_queue(ready_queue) << "]" << std::endl;
+        // Check for I/O completion
+        for (Process& p : processes) {
+            if (p.is_io_completed(current_time)) {
+                ready_queue.push(&p);
+                std::cout << "time " << current_time << "ms: Process " << p.get_pid() 
+                        << " completed I/O; added to ready queue [Q " << print_queue(ready_queue) << "]" << std::endl;
+            }
+        }
+
+        // Handle context switch
+        if (in_context_switch) {
+            context_switch_remaining--;
+            if (context_switch_remaining == 0) {
+                in_context_switch = false;
+                if (current_process == nullptr && !ready_queue.empty()) {
+                    current_process = ready_queue.front();
+                    ready_queue.pop();
+                    int burst_time = current_process->get_next_cpu_burst();
+                    std::cout << "time " << current_time << "ms: Process " << current_process->get_pid() 
+                            << " started using the CPU for " << burst_time << "ms burst [Q " 
+                            << print_queue(ready_queue) << "]" << std::endl;
+                }
+            }
+        }
+
+        // Process execution
+        if (current_process != nullptr && !in_context_switch) {
+            current_process->preempt(1);
+            if (current_process->get_remaining_time() == 0) {
+                int remaining_bursts = current_process->get_remaining_bursts();
+                std::cout << "time " << current_time << "ms: Process " << current_process->get_pid() 
+                        << " completed a CPU burst; " << remaining_bursts 
+                        << (remaining_bursts == 1 ? " burst" : " bursts") << " to go [Q " << print_queue(ready_queue) << "]" << std::endl;
+                
+                if (remaining_bursts == 0) {
+                    std::cout << "time " << current_time << "ms: Process " << current_process->get_pid() 
+                            << " terminated [Q " << print_queue(ready_queue) << "]" << std::endl;
+                    current_process->set_completed(true);
+                } else {
+                    int io_time = current_process->start_io();
+                    std::cout << "time " << current_time << "ms: Process " << current_process->get_pid() 
+                            << " switching out of CPU; blocking on I/O until time " 
+                            << current_time + t_cs / 2 + io_time 
+                            << "ms [Q " << print_queue(ready_queue) << "]" << std::endl;
+                }
+                in_context_switch = true;
+                context_switch_remaining = t_cs;
+                current_process = nullptr;
+            }
+        }
+
+        // Start new process if CPU is idle
+        if (current_process == nullptr && !in_context_switch && !ready_queue.empty()) {
+            in_context_switch = true;
+            context_switch_remaining = t_cs;
+        }
+
+        current_time++;
+
+        // Check if simulation is complete
+        if (all_processes_completed(processes) && ready_queue.empty() && current_process == nullptr && !in_context_switch) {
+            break;
+        }
     }
+
+    std::cout << "time " << current_time << "ms: Simulator ended for FCFS [Q empty]" << std::endl;
+}
 
     void simulate_sjf(std::vector<Process>& processes, int t_cs, double alpha) {
         // Similar structure to FCFS, but use get_next_process_sjf for selecting the next process
@@ -263,10 +263,6 @@ void print_processes(const std::vector<Process>& processes, Totaller& tot) {
 
     void print_verbose_output(const std::string& event, int time, const Process& process) {
         std::cout << "Time " << time << "ms: " << event << " " << process.get_pid() << std::endl;
-    }
-
-    void print_algorithm_start(const std::string& algorithm) {
-        std::cout << "Simulating " << algorithm << std::endl;
     }
 
     void print_algorithm_end(const std::string& algorithm) {
@@ -346,22 +342,18 @@ int main(int argc, char** argv) {
     
     std::cout << "\n<<< PROJECT PART II" << std::endl;
     std::cout << std::fixed << std::setprecision(2) << "<<< -- t_cs=" << t_cs << "ms; alpha=" << alpha << "; t_slice=" << t_slice << "ms" << std::endl;
-    print_algorithm_start("FCFS");
     simulate_fcfs(processes, t_cs);
     print_algorithm_end("FCFS");
     reset_processes(processes);
     /*
-    print_algorithm_start("SJF");
     simulate_sjf(processes, t_cs, alpha);
     print_algorithm_end("SJF");
     reset_processes(processes);
 
-    print_algorithm_start("SRT");
     simulate_srt(processes, t_cs, alpha);
     print_algorithm_end("SRT");
     reset_processes(processes);
 
-    print_algorithm_start("RR");
     simulate_rr(processes, t_cs, t_slice);
     print_algorithm_end("RR");
     */

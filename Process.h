@@ -19,9 +19,10 @@ public:
     bool is_cpu_bound_process() const { return is_cpu_bound; }
     int get_num_bursts() const { return cpu_bursts.size(); }
     int get_next_cpu_burst();
-    bool is_completed() const;
+    bool is_completed() const { return completed; }
     int start_io();
     bool is_io_completed(int current_time);
+    int get_io_completion_time() const { return io_completion_time; }
     void reset();
     void set_waiting_time(int time) { waiting_time = time; }
     int get_waiting_time() const { return waiting_time; }
@@ -32,7 +33,9 @@ public:
     void update_burst_estimate(double new_estimate) { burst_estimate = new_estimate; }
     double get_burst_estimate() const { return burst_estimate; }
     int get_remaining_time() const { return remaining_time; }
-    void preempt(int time_used);
+    void preempt(int time_used) { remaining_time -= time_used; }
+    void set_completed(bool value) { completed = value; }
+    int get_remaining_bursts() const { return cpu_bursts.size() - current_burst_index; }
 
 private:
     std::string pid;
@@ -47,6 +50,7 @@ private:
     int response_time;
     double burst_estimate;
     int remaining_time;
+    bool completed;
 };
 
 #endif
