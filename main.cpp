@@ -418,24 +418,6 @@ void print_processes(const std::vector<Process>& processes, Totaller& tot) {
         }
     }
 
-    int get_next_process_sjf(const std::vector<Process*>& ready_queue) {
-        if (ready_queue.empty()) return -1;
-        int shortest_index = 0;
-        double shortest_time = ready_queue[0]->get_burst_estimate();
-        for (size_t i = 1; i < ready_queue.size(); i++) {
-            double estimated_time = ready_queue[i]->get_burst_estimate();
-            if (estimated_time < shortest_time) {
-                shortest_index = i;
-                shortest_time = estimated_time;
-            } else if (estimated_time == shortest_time && 
-                    ready_queue[i]->get_arrival_time() < ready_queue[shortest_index]->get_arrival_time()) {
-                // If estimates are equal, choose the process that arrived first
-                shortest_index = i;
-            }
-        }
-        return shortest_index;
-    }
-
     int get_next_process_srt(const std::vector<Process*>& ready_queue, Process* current_process, double alpha) {
         // Similar to SJF, but also consider the remaining time of the current process
         return 0;
@@ -477,14 +459,14 @@ int main(int argc, char** argv) {
         two-character code consisting of an uppercase letter from A to Z followed by a number from
         0 to 9. Processes are assigned in order A0, A1, A2, . . ., A9, B0, B1, . . ., Z9.
     */
-    int num_processes = 3;//atoi(*(argv+1));
+    int num_processes = atoi(*(argv+1));
     /*
         Define n_cpu as the number of processes that are CPU-bound. For this project, we
         will classify processes as I/O-bound or CPU-bound. The n_cpu CPU-bound processes, when
         generated, will have CPU burst times that are longer by a factor of 4 and will have I/O burst
         times that are shorter by a factor of 8.
     */
-    int num_cpu_processes = 1;//atoi(*(argv+2));
+    int num_cpu_processes = atoi(*(argv+2));
     /*
         *(argv+3): We will use a pseudo-random number generator to determine the interarrival
         times of CPU bursts. This command-line argument, i.e. seed, serves as the seed for the
@@ -494,13 +476,13 @@ int main(int argc, char** argv) {
         an equivalent 48-bit linear congruential generator, as described in the man page for these
         functions in C.1
     */
-    int seed = 32;//atoi(*(argv+3));
+    int seed = atoi(*(argv+3));
     /*
         To determine interarrival times, we will use an exponential distribution, as illustrated in the exp-random.c example. This command-line 
         argument is parameter λ; remember that 1/λ will be the average random value generated, e.g., if λ = 0.01, then the average should
         be appoximately 100. In the exp-random.c example, use the formula shown in the code, i.e., −ln(r)/λ.
     */
-    double lambda = 0.001;//atof(*(argv+4));
+    double lambda = atof(*(argv+4));
     /*
         For the exponential distribution, this command-line argument represents the
         upper bound for valid pseudo-random numbers. This threshold is used to avoid values far
@@ -509,10 +491,10 @@ int main(int argc, char** argv) {
         ceiling function (see the next page), be sure the ceiling is still valid according to this upper
         bound.
     */
-    int upper_bound = 1024;//atoi(*(argv+5));
-    int t_cs = 4;//atoi(*(argv+6));
-    double alpha = 0.75;//atof(*(argv+7));
-    int t_slice = 256;//atoi(*(argv+8));
+    int upper_bound = atoi(*(argv+5));
+    int t_cs = atoi(*(argv+6));
+    double alpha = atof(*(argv+7));
+    int t_slice = atoi(*(argv+8));
     Totaller t = Totaller();
     srand48(seed);
 
@@ -530,17 +512,17 @@ int main(int argc, char** argv) {
     
     std::cout << "\n<<< PROJECT PART II" << std::endl;
     std::cout << std::fixed << std::setprecision(2) << "<<< -- t_cs=" << t_cs << "ms; alpha=" << alpha << "; t_slice=" << t_slice << "ms" << std::endl;
-    /*
+    
     print_algorithm_start("FCFS");
     simulate_fcfs(processes, t_cs);
     print_algorithm_end("FCFS");
     reset_processes(processes);
-    */
+    /*
     print_algorithm_start("SJF");
     simulate_sjf(processes, t_cs, alpha, lambda);
     print_algorithm_end("SJF");
     reset_processes(processes);
-    /**/
+    /*
     print_algorithm_start("SRT");
     simulate_srt(processes, t_cs, alpha);
     print_algorithm_end("SRT");
