@@ -49,7 +49,7 @@ void Process::update_completion_status() {
 
 int Process::start_io(int current_time) {
     if (current_burst_index < cpu_bursts.size() - 1) {
-        io_completion_time = cpu_bursts[current_burst_index].second += 2; // hard code
+        io_completion_time = cpu_bursts[current_burst_index].second += 1; // hard code
         io_completion_time += current_time;
         current_burst_index++;
         return io_completion_time;
