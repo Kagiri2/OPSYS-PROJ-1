@@ -129,6 +129,7 @@ void print_processes(const std::vector<Process>& processes, Totaller& tot) {
             // Check for new arrivals
             for (Process& p : processes) {
                 if (p.get_arrival_time() == current_time) {
+                    std::cout << "ARRIVAL time " << current_time << std::endl;
                     ready_queue.push_back(&p);
                     std::cout << "time " << current_time << "ms: Process " << p.get_pid() 
                             << " arrived; added to ready queue [Q " << print_queue(ready_queue) << "]" << std::endl;
@@ -138,6 +139,7 @@ void print_processes(const std::vector<Process>& processes, Totaller& tot) {
             // Check for I/O completion
             for (Process& p : processes) {
                 if (p.is_io_completed(current_time)) {
+                    std::cout << "IO time " << current_time << std::endl;
                     ready_queue.push_back(&p);
                     std::cout << "time " << current_time << "ms: Process " << p.get_pid() 
                             << " completed I/O; added to ready queue [Q " << print_queue(ready_queue) << "]" << std::endl;
@@ -210,6 +212,23 @@ void print_processes(const std::vector<Process>& processes, Totaller& tot) {
 
     void simulate_srt(std::vector<Process>& processes, int t_cs, double alpha) {
         // Similar structure to SJF, but check for preemption after each time unit
+        int current_time = 319;
+        std::vector<Process*> ready_queue;
+        Process* current_process = nullptr;
+
+        std::cout << "time 0ms: Simulator started for SRT [Q empty]" << std::endl;
+
+        //while(!processes.empty() || !ready_queue.empty() || current_process != nullptr) {
+            
+            for(Process& p: processes) {
+                if(p.get_arrival_time() == current_time) {
+                    ready_queue.push_back(&p);
+                    std::cout << "time " << current_time << "ms: Process " << p.get_pid() 
+                            << " arrived; added to ready queue [Q " << print_queue(ready_queue) << "]" << std::endl;
+                    std::cout << p.is_cpu_bound_process();
+                }
+            }
+        //}
     }
 
     void simulate_rr(std::vector<Process>& processes, int t_cs, int t_slice) {
@@ -255,6 +274,7 @@ void print_processes(const std::vector<Process>& processes, Totaller& tot) {
 
     int get_next_process_srt(const std::vector<Process*>& ready_queue, Process* current_process, double alpha) {
         // Similar to SJF, but also consider the remaining time of the current process
+        return 0;
     }
 
     void print_simulation_results(const std::string& algorithm, const std::vector<Process>& processes, int t_cs) {
@@ -270,7 +290,7 @@ void print_processes(const std::vector<Process>& processes, Totaller& tot) {
     }
 
     void print_algorithm_end(const std::string& algorithm) {
-        std::cout << algorithm << " simulation completed" << std::endl;
+        std::cout << algorithm << " simulation completed\n" << std::endl;
     }
 
     void calculate_statistics(const std::vector<Process>& processes, int t_cs) {
@@ -346,6 +366,7 @@ int main(int argc, char** argv) {
     
     std::cout << "\n<<< PROJECT PART II" << std::endl;
     std::cout << std::fixed << std::setprecision(2) << "<<< -- t_cs=" << t_cs << "ms; alpha=" << alpha << "; t_slice=" << t_slice << "ms" << std::endl;
+
     print_algorithm_start("FCFS");
     simulate_fcfs(processes, t_cs);
     print_algorithm_end("FCFS");
@@ -355,12 +376,12 @@ int main(int argc, char** argv) {
     simulate_sjf(processes, t_cs, alpha);
     print_algorithm_end("SJF");
     reset_processes(processes);
-
+    */
     print_algorithm_start("SRT");
     simulate_srt(processes, t_cs, alpha);
     print_algorithm_end("SRT");
     reset_processes(processes);
-
+    /*
     print_algorithm_start("RR");
     simulate_rr(processes, t_cs, t_slice);
     print_algorithm_end("RR");

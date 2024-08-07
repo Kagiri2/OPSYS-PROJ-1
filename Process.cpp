@@ -15,7 +15,7 @@ void Process::generate_bursts(int seed, int upper_bound, double lambda) {
         if (j < num_bursts - 1) {
             io_time = cpu.getIOTime(seed, upper_bound, lambda, is_cpu_bound);
         }
-        cpu_bursts.push_back({cpu_time, io_time});
+        cpu_bursts.push_back(std::make_pair(cpu_time, io_time));
     }
 }
 

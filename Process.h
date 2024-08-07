@@ -14,7 +14,7 @@ public:
     // Getters
     std::string get_pid() const { return pid; }
     int get_arrival_time() const { return arrival_time; }
-    const std::vector<std::pair<int, int>>& get_cpu_bursts() const { return cpu_bursts; }
+    const std::vector<std::pair<int, int> >& get_cpu_bursts() const { return cpu_bursts; }
     int get_current_burst_index() const { return current_burst_index; }
     bool is_cpu_bound_process() const { return is_cpu_bound; }
     int get_num_bursts() const { return cpu_bursts.size(); }
@@ -37,7 +37,7 @@ public:
 private:
     std::string pid;
     int arrival_time;
-    std::vector<std::pair<int, int>> cpu_bursts;
+    std::vector<std::pair<int, int> > cpu_bursts;
     bool is_cpu_bound;
     CPU cpu;
     int current_burst_index;
