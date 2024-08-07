@@ -126,6 +126,7 @@ void print_processes(const std::vector<Process>& processes, Totaller& tot) {
         std::cout << "time 0ms: Simulator started for FCFS [Q empty]" << std::endl;
 
         while (true) {
+
             // Check for new arrivals
             for (Process& p : processes) {
                 if (p.get_arrival_time() == current_time) {
@@ -155,14 +156,18 @@ void print_processes(const std::vector<Process>& processes, Totaller& tot) {
             if (context_switch_remaining > 0) {
                 context_switch_remaining--;
                 if (context_switch_remaining == 0) {
+                    // if we are done switching OUT a process (aka CPU is idle)
                     if (switching_out) {
                         switching_out = false;
                         current_process = nullptr;
                     } else if (current_process != nullptr) {
+                        // the CPU isn't idle and we start using it
                         int burst_time = current_process->get_next_cpu_burst();
-                        std::cout << "time " << current_time << "ms: Process " << current_process->get_pid() 
+                        if(current_time < 10000) {
+                            std::cout << "time " << current_time << "ms: Process " << current_process->get_pid() 
                                 << " started using the CPU for " << burst_time << "ms burst [Q " 
                                 << print_queue(ready_queue) << "]" << std::endl;
+                        }
                     }
                 }
             }
@@ -176,7 +181,7 @@ void print_processes(const std::vector<Process>& processes, Totaller& tot) {
 
             // Process execution
             if (current_process != nullptr && context_switch_remaining == 0) {
-                current_process->preempt(1);
+                current_process->preempt(1); // decreases the burst time by 1
                 if (current_process->get_remaining_time() == 0) {
                     int remaining_bursts = current_process->get_num_bursts() - current_process->get_current_burst_index() - 1;
                     if (remaining_bursts == 0) {
@@ -185,15 +190,19 @@ void print_processes(const std::vector<Process>& processes, Totaller& tot) {
                         switching_out = true;
                         context_switch_remaining = t_cs / 2;
                     } else {
-                        std::cout << "time " << current_time + 1 << "ms: Process " << current_process->get_pid() 
+                        if(current_time < 10000) {
+                            std::cout << "time " << current_time + 1 << "ms: Process " << current_process->get_pid() 
                                 << " completed a CPU burst; " << remaining_bursts 
                                 << (remaining_bursts == 1 ? " burst" : " bursts") << " to go [Q " << print_queue(ready_queue) << "]" << std::endl;
+                        }
                         
                         int io_time = current_process->start_io(current_time + 1);
-                        std::cout << "time " << current_time + 1 << "ms: Process " << current_process->get_pid() 
+                        if(current_time < 10000) {
+                            std::cout << "time " << current_time + 1 << "ms: Process " << current_process->get_pid() 
                                 << " switching out of CPU; blocking on I/O until time " 
                                 << current_process->get_io_completion_time()
                                 << "ms [Q " << print_queue(ready_queue) << "]" << std::endl;
+                        }
                         switching_out = true;
                         context_switch_remaining = t_cs / 2 + 1;
                     }
@@ -213,6 +222,7 @@ void print_processes(const std::vector<Process>& processes, Totaller& tot) {
 
     void simulate_sjf(std::vector<Process>& processes, int t_cs, double alpha) {
         // Similar structure to FCFS, but use get_next_process_sjf for selecting the next process
+        
     }
 
     void simulate_srt(std::vector<Process>& processes, int t_cs, double alpha) {
