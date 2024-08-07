@@ -24,6 +24,8 @@ public:
     int start_io(int current_time);
     bool is_io_completed(int current_time);
     void reset();
+    void set_completed(bool status) { completed = status; }
+    void update_completion_status();
     void set_waiting_time(int time) { waiting_time = time; }
     int get_waiting_time() const { return waiting_time; }
     void set_turnaround_time(int time) { turnaround_time = time; }
@@ -51,6 +53,7 @@ private:
     double burst_estimate;
     int remaining_time;
     int tau;
+    bool completed;
 };
 
 #endif

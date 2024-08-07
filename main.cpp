@@ -199,6 +199,7 @@ void print_processes(const std::vector<Process>& processes, Totaller& tot) {
                                 << " terminated [Q " << print_queue(ready_queue) << "]" << std::endl;
                         switching_out = true;
                         context_switch_remaining = t_cs / 2;
+                        current_process->update_completion_status();
                     } else {
                         if(current_time < 10000) {
                             std::cout << "time " << current_time + 1 << "ms: Process " << current_process->get_pid() 

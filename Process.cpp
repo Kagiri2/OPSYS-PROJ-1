@@ -4,7 +4,7 @@ Process::Process(std::string id, int arrive_time, bool cpu_bound)
     : pid(id), arrival_time(arrive_time), is_cpu_bound(cpu_bound),
       current_burst_index(0), io_completion_time(0),
       waiting_time(0), turnaround_time(0), response_time(-1),
-      burst_estimate(0), remaining_time(0), tau(0) {}
+      burst_estimate(0), remaining_time(0), completed(false), tau(0) {}
 
 void Process::generate_bursts(int seed, int upper_bound, double lambda, bool is_cpu_bound) {
     int num_bursts = cpu.getCPUBurst();
@@ -40,7 +40,11 @@ int Process::get_io_completion_time()
 }
 
 bool Process::is_completed() const {
-    return current_burst_index >= cpu_bursts.size();
+    return completed;
+}
+
+void Process::update_completion_status() {
+    completed = true;
 }
 
 int Process::start_io(int current_time) {
