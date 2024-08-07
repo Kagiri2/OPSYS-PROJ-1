@@ -9,7 +9,7 @@ class Process {
 public:
     Process(std::string id, int arrive_time, bool cpu_bound);
 
-    void generate_bursts(int seed, int upper_bound, double lambda);
+    void generate_bursts(int seed, int upper_bound, double lambda, bool is_cpu_bound);
 
     // Getters
     std::string get_pid() const { return pid; }
@@ -19,8 +19,9 @@ public:
     bool is_cpu_bound_process() const { return is_cpu_bound; }
     int get_num_bursts() const { return cpu_bursts.size(); }
     int get_next_cpu_burst();
+    int get_io_completion_time();
     bool is_completed() const;
-    int start_io();
+    int start_io(int current_time);
     bool is_io_completed(int current_time);
     void reset();
     void set_waiting_time(int time) { waiting_time = time; }
