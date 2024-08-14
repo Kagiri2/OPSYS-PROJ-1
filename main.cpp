@@ -384,10 +384,10 @@ void print_processes(const std::vector<Process>& processes, Totaller& tot) {
 
             current_time++;
 
-            // Check if simulation is complete
-            // if (all_processes_completed(processes) && ready_queue.empty() && current_process == nullptr && context_switch_remaining == 0) {
-            //     break;
-            // }
+            //Check if simulation is complete
+            if (all_processes_completed(processes) && ready_queue.empty() && current_process == nullptr && context_switch_remaining == 0) {
+                break;
+            }
         }
 
         std::cout << "time " << current_time << "ms: Simulator ended for FCFS [Q " << print_queue(ready_queue) << "]" << std::endl;
@@ -579,10 +579,10 @@ void print_processes(const std::vector<Process>& processes, Totaller& tot) {
 
             current_time++;
 
-            // Check if simulation is complete
-            // if (all_processes_completed(processes) && ready_queue.empty() && current_process == nullptr && context_switch_remaining == 0) {
-            //     break;
-            // }
+            //Check if simulation is complete
+            if (all_processes_completed(processes) && ready_queue.empty() && current_process == nullptr && context_switch_remaining == 0) {
+                break;
+            }
         }
 
         std::cout << "time " << current_time << "ms: Simulator ended for FCFS [Q " << print_queue(ready_queue) << "]" << std::endl;
@@ -652,16 +652,16 @@ int main(int argc, char** argv) {
         two-character code consisting of an uppercase letter from A to Z followed by a number from
         0 to 9. Processes are assigned in order A0, A1, A2, . . ., A9, B0, B1, . . ., Z9.
     */
-    //int num_processes = 8;//atoi(*(argv+1));
-    int num_processes = atoi(*(argv+1));
+    int num_processes = 8;//atoi(*(argv+1));
+    //int num_processes = atoi(*(argv+1));
     /*
         Define n_cpu as the number of processes that are CPU-bound. For this project, we
         will classify processes as I/O-bound or CPU-bound. The n_cpu CPU-bound processes, when
         generated, will have CPU burst times that are longer by a factor of 4 and will have I/O burst
         times that are shorter by a factor of 8.
     */
-    //int num_cpu_processes = 6;//atoi(*(argv+2));
-    int num_cpu_processes = atoi(*(argv+2));
+    int num_cpu_processes = 6;//atoi(*(argv+2));
+    //int num_cpu_processes = atoi(*(argv+2));
     /*
         *(argv+3): We will use a pseudo-random number generator to determine the interarrival
         times of CPU bursts. This command-line argument, i.e. seed, serves as the seed for the
@@ -671,16 +671,16 @@ int main(int argc, char** argv) {
         an equivalent 48-bit linear congruential generator, as described in the man page for these
         functions in C.1
     */
-    //int seed = 512;//atoi(*(argv+3));
-    int seed = atoi(*(argv+3));
+    int seed = 512;//atoi(*(argv+3));
+    //int seed = atoi(*(argv+3));
     /*
         To determine interarrival times, we will use an exponential distribution, as illustrated in the exp-random.c example. This command-line 
         argument is parameter λ; remember that 1/λ will be the average random value generated, e.g., if λ = 0.01, then the average should
         be appoximately 100. In the exp-random.c example, use the formula shown in the code, i.e., −ln(r)/λ.
     */
 
-    //double lambda = 0.001;//atof(*(argv+4));
-    double lambda = atof(*(argv+4));
+    double lambda = 0.001;//atof(*(argv+4));
+    //double lambda = atof(*(argv+4));
     /*
         For the exponential distribution, this command-line argument represents the
         upper bound for valid pseudo-random numbers. This threshold is used to avoid values far
@@ -689,14 +689,14 @@ int main(int argc, char** argv) {
         ceiling function (see the next page), be sure the ceiling is still valid according to this upper
         bound.
     */
-    //int upper_bound = 1024;//atoi(*(argv+5));
-    int upper_bound = atoi(*(argv+5));
-    //int t_cs = 6;//atoi(*(argv+6));
-    int t_cs = atoi(*(argv+6));
-    //double alpha = 0.9;//atof(*(argv+7));
-    double alpha = atof(*(argv+7));
-    //int t_slice = 128;//atoi(*(argv+8));
-    int t_slice = atoi(*(argv+8));
+    int upper_bound = 1024;//atoi(*(argv+5));
+    //int upper_bound = atoi(*(argv+5));
+    int t_cs = 6;//atoi(*(argv+6));
+    //int t_cs = atoi(*(argv+6));
+    double alpha = 0.9;//atof(*(argv+7));
+    //double alpha = atof(*(argv+7));
+    int t_slice = 128;//atoi(*(argv+8));
+    //int t_slice = atoi(*(argv+8));
     Totaller t = Totaller();
     srand48(seed);
 
@@ -721,7 +721,7 @@ int main(int argc, char** argv) {
     reset_processes(processes);
 
     print_algorithm_start("SJF");
-    //simulate_sjf(processes, t_cs, alpha, lambda);
+    simulate_sjf(processes, t_cs, alpha, lambda);
     print_algorithm_end("SJF");
     reset_processes(processes);
     

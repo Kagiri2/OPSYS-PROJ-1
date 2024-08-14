@@ -73,6 +73,8 @@ void Process::reset() {
     turnaround_time = 0;
     response_time = -1;
     remaining_time = 0;
+    tau = 0;
+    completed = false;
 }
 
 void Process::preempt(int time_used) {
