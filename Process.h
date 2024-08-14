@@ -38,6 +38,9 @@ public:
     void preempt(int time_used);
     int get_tau();
     void set_tau(int new_tau);
+    int get_total_burst_time() const;
+    void increment_io_completion_time() { io_completion_time++;}
+    void set_io_completion_time(int time) { io_completion_time = time; }
 
 private:
     std::string pid;
