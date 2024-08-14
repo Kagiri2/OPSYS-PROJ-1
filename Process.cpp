@@ -39,6 +39,13 @@ int Process::get_io_completion_time()
     return io_completion_time;
 }
 
+int Process::get_total_burst_time() const {
+    if (current_burst_index < cpu_bursts.size()) {
+        return cpu_bursts[current_burst_index].first;
+    }
+    return 0;
+}
+
 bool Process::is_completed() const {
     return completed;
 }
@@ -78,7 +85,7 @@ void Process::reset() {
 }
 
 void Process::preempt(int time_used) {
-    remaining_time -= time_used;
+    remaining_time = std::max(0, remaining_time - time_used);
     // if (remaining_time <= 0) {
     //     current_burst_index++;
     //     if (current_burst_index < cpu_bursts.size()) {
