@@ -67,7 +67,7 @@ void print_processes(const std::vector<Process>& processes, Totaller& tot) {
         if (process->get_num_bursts() == 1) {
             std::cout << " CPU burst:" << std::endl;
         } else {
-            std::cout << " CPU bursts:" << std::endl;
+            std::cout << " CPU bursts" << std::endl;
         }
 
         /* NOT NEEDED FOR PART 2
