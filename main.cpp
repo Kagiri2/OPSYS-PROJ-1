@@ -406,7 +406,7 @@ void print_processes(const std::vector<Process>& processes, Totaller& tot) {
             }
         }
 
-        std::cout << "time " << current_time << "ms: Simulator ended for FCFS [Q " << print_queue(ready_queue) << "]" << std::endl;
+        std::cout << "time " << current_time << "ms: Simulator ended for SJF [Q " << print_queue(ready_queue) << "]" << std::endl;
     }
 
     void simulate_srt(std::vector<Process>& processes, int t_cs, double alpha, double lambda) {
@@ -601,7 +601,7 @@ void print_processes(const std::vector<Process>& processes, Totaller& tot) {
             }
         }
 
-        std::cout << "time " << current_time << "ms: Simulator ended for FCFS [Q " << print_queue(ready_queue) << "]" << std::endl;
+        std::cout << "time " << current_time << "ms: Simulator ended for SRT [Q " << print_queue(ready_queue) << "]" << std::endl;
     }
 
     void simulate_rr(std::vector<Process>& processes, int t_cs, int t_slice) {
