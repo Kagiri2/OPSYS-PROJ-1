@@ -26,7 +26,6 @@ void print_simulation_results(const std::string& algorithm, const std::vector<Pr
 
 // PART 2 OUTPUT FUNCTIONS
 void print_verbose_output(const std::string& event, int time, const Process& process);
-void print_algorithm_start(const std::string& algorithm);
 void print_algorithm_end(const std::string& algorithm);
 
 void calculate_statistics(const std::vector<Process>& processes, int t_cs);
@@ -782,12 +781,8 @@ void print_processes(const std::vector<Process>& processes, Totaller& tot) {
         std::cout << "Time " << time << "ms: " << event << " " << process.get_pid() << std::endl;
     }
 
-    void print_algorithm_start(const std::string& algorithm) {
-        std::cout << "Simulating " << algorithm << std::endl;
-    }
-
     void print_algorithm_end(const std::string& algorithm) {
-        std::cout << algorithm << " simulation completed\n" << std::endl;
+        std::cout << "\n";
     }
 
     void calculate_statistics(const std::vector<Process>& processes, int t_cs) {
@@ -866,22 +861,18 @@ int main(int argc, char** argv) {
     std::cout << "\n<<< PROJECT PART II" << std::endl;
     std::cout << std::fixed << std::setprecision(2) << "<<< -- t_cs=" << t_cs << "ms; alpha=" << alpha << "; t_slice=" << t_slice << "ms" << std::endl;
 
-    print_algorithm_start("FCFS");
     simulate_fcfs(processes, t_cs);
     print_algorithm_end("FCFS");
     reset_processes(processes);
 
-    print_algorithm_start("SJF");
     simulate_sjf(processes, t_cs, alpha, lambda);
     print_algorithm_end("SJF");
     reset_processes(processes);
 
-    print_algorithm_start("SRT");
     simulate_srt(processes, t_cs, alpha, lambda);
     print_algorithm_end("SRT");
     reset_processes(processes);
     
-    print_algorithm_start("RR");
     simulate_rr(processes, t_cs, t_slice);
     print_algorithm_end("RR");
     
