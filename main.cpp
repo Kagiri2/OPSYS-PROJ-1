@@ -35,16 +35,19 @@ double ceilhelper(double value) {
     return std::ceil(value * 1000.0) / 1000.0;
 }
 
-std::vector<Process> generate_processes(int n, int ncpu, int seed, double lambda, int upper_bound) {
+std::vector<Process> generate_processes(int n, int ncpu, int seed, double lambda, int upper_bound, int t_cs) {
     std::vector<Process> processes;
     CPU cpu;
 
     for (int i = 0; i < n; i++) {
-        std::string pid = std::string(1, 'A' + i / 10) + std::to_string(i % 10);
+        char letter = 'A' + i / 10;
+        int number = i % 10;
+        std::string pid = std::string(1, letter) + std::to_string(number);
+        
         bool is_cpu_bound = i < ncpu;
         int arrival_time = cpu.getArrivalTime(seed, upper_bound, lambda);
 
-        Process p(pid, arrival_time, is_cpu_bound);
+        Process p(pid, arrival_time, is_cpu_bound, t_cs);
         p.generate_bursts(seed, upper_bound, lambda, is_cpu_bound);
         processes.push_back(p);
     }
@@ -223,7 +226,7 @@ void print_processes(const std::vector<Process>& processes, Totaller& tot) {
                                 << (remaining_bursts == 1 ? " burst" : " bursts") << " to go [Q " << print_queue(ready_queue) << "]" << std::endl;
                         }
                         
-                        current_process->start_io(current_time + 3);
+                        current_process->start_io(current_time + 1);
                         if(current_time < 10000) {
                             std::cout << "time " << current_time + 1 << "ms: Process " << current_process->get_pid() 
                                 << " switching out of CPU; blocking on I/O until time " 
@@ -385,7 +388,7 @@ void print_processes(const std::vector<Process>& processes, Totaller& tot) {
                             std::cout << "time " << current_time + 1 << "ms: Recalculated tau for process " << current_process->get_pid() << ": old tau " << old_tau << "ms ==> new tau " << current_process->get_tau() << "ms [Q " << print_queue(ready_queue) << "]" << std::endl;
                         }
 
-                        current_process->start_io(current_time + 3);
+                        current_process->start_io(current_time + 1);
                         if(current_time < 10000) {
                             std::cout << "time " << current_time + 1 << "ms: Process " << current_process->get_pid() 
                                 << " switching out of CPU; blocking on I/O until time " 
@@ -580,7 +583,7 @@ void print_processes(const std::vector<Process>& processes, Totaller& tot) {
                             std::cout << "time " << current_time + 1 << "ms: Recalculated tau for process " << current_process->get_pid() << ": old tau " << old_tau << "ms ==> new tau " << current_process->get_tau() << "ms [Q " << print_queue(ready_queue) << "]" << std::endl;
                         }
 
-                        current_process->start_io(current_time + 3);
+                        current_process->start_io(current_time + 1);
                         if(current_time < 10000) {
                             std::cout << "time " << current_time + 1 << "ms: Process " << current_process->get_pid() 
                                 << " switching out of CPU; blocking on I/O until time " 
@@ -829,8 +832,7 @@ int main(int argc, char** argv) {
         be appoximately 100. In the exp-random.c example, use the formula shown in the code, i.e., −ln(r)/λ.
     */
 
-    double lambda = 0.001;//atof(*(argv+4));
-    //double lambda = atof(*(argv+4));
+    double lambda = atof(*(argv+4));
     /*
         For the exponential distribution, this command-line argument represents the
         upper bound for valid pseudo-random numbers. This threshold is used to avoid values far
@@ -855,12 +857,12 @@ int main(int argc, char** argv) {
     }
     std::cout << "<<< -- seed=" << seed << "; lambda=" << std::fixed << std::setprecision(6) << lambda << "; bound=" << upper_bound << std::endl;
 
-    std::vector<Process> processes = generate_processes(num_processes, num_cpu_processes, seed, lambda, upper_bound);
+    std::vector<Process> processes = generate_processes(num_processes, num_cpu_processes, seed, lambda, upper_bound, t_cs);
     print_processes(processes, t);
     
     std::cout << "\n<<< PROJECT PART II" << std::endl;
     std::cout << std::fixed << std::setprecision(2) << "<<< -- t_cs=" << t_cs << "ms; alpha=" << alpha << "; t_slice=" << t_slice << "ms" << std::endl;
-
+    
     simulate_fcfs(processes, t_cs);
     print_algorithm_end("FCFS");
     reset_processes(processes);
@@ -868,13 +870,14 @@ int main(int argc, char** argv) {
     simulate_sjf(processes, t_cs, alpha, lambda);
     print_algorithm_end("SJF");
     reset_processes(processes);
-
+   
     simulate_srt(processes, t_cs, alpha, lambda);
     print_algorithm_end("SRT");
-    reset_processes(processes);
     
+    reset_processes(processes);
     simulate_rr(processes, t_cs, t_slice);
     print_algorithm_end("RR");
+    
     
     // Print final statistics
     print_statistics("FCFS");

@@ -1,10 +1,11 @@
 #include "Process.h"
 
-Process::Process(std::string id, int arrive_time, bool cpu_bound)
+Process::Process(std::string id, int arrive_time, bool cpu_bound, int context_switch_time)
     : pid(id), arrival_time(arrive_time), is_cpu_bound(cpu_bound),
       current_burst_index(0), io_completion_time(0),
       waiting_time(0), turnaround_time(0), response_time(-1),
-      burst_estimate(0), remaining_time(0), tau(0), completed(false) {}
+      burst_estimate(0), remaining_time(0), tau(0), completed(false),
+      t_cs(context_switch_time) {}
 
 void Process::generate_bursts(int seed, int upper_bound, double lambda, bool is_cpu_bound) {
     int num_bursts = cpu.getCPUBurst();
@@ -56,8 +57,7 @@ void Process::update_completion_status() {
 
 int Process::start_io(int current_time) {
     if (current_burst_index < static_cast<int>(cpu_bursts.size()) - 1) {
-        io_completion_time = cpu_bursts[current_burst_index].second += 1; // hard code
-        io_completion_time += current_time;
+        io_completion_time = current_time + cpu_bursts[current_burst_index].second + t_cs / 2;
         current_burst_index++;
         return io_completion_time;
     }
