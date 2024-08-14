@@ -8,6 +8,7 @@
 #include "Totaller.h"
 #include <queue>
 #include <list>
+#include <sstream>
 
 
 void simulate_fcfs(std::vector<Process>& processes, int t_cs);
