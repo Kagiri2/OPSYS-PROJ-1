@@ -1,3 +1,4 @@
+g++    -c -o main.o main.cpp
 ./main.out 20 12 128 0.01 4096 4 0.96 64
 <<< PROJECT PART I
 <<< -- process set (n=20) with 12 CPU-bound processes
@@ -371,7 +372,7 @@ time 93520ms: Process A8 terminated [Q A7 B1]
 time 96783ms: Process A7 terminated [Q A9]
 time 106771ms: Process A9 terminated [Q B1]
 time 107526ms: Process B1 terminated [Q empty]
-time 107528ms: Simulator ended for FCFS [Q empty]
+time 107528ms: Simulator ended for SJF [Q empty]
 SJF simulation completed
 
 Simulating SRT
@@ -381,14 +382,14 @@ time 4ms: Process B4 (tau 100ms) started using the CPU for 8ms burst [Q empty]
 time 9ms: Process B1 (tau 100ms) arrived; added to ready queue [Q B1]
 time 12ms: Process B4 (tau 100ms) completed a CPU burst; 15 bursts to go [Q B1]
 time 12ms: Recalculated tau for process B4: old tau 100ms ==> new tau 12ms [Q B1]
-time 12ms: Process B4 switching out of CPU; blocking on I/O until time 984ms [Q B1]
+time 12ms: Process B4 switching out of CPU; blocking on I/O until time 982ms [Q B1]
 time 16ms: Process B1 (tau 100ms) started using the CPU for 28ms burst [Q empty]
 time 29ms: Process A6 (tau 100ms) arrived; added to ready queue [Q A6]
 time 30ms: Process B7 (tau 100ms) arrived; added to ready queue [Q A6 B7]
 time 41ms: Process A9 (tau 100ms) arrived; added to ready queue [Q A6 A9 B7]
 time 44ms: Process B1 (tau 100ms) completed a CPU burst; 16 bursts to go [Q A6 A9 B7]
 time 44ms: Recalculated tau for process B1: old tau 100ms ==> new tau 31ms [Q A6 A9 B7]
-time 44ms: Process B1 switching out of CPU; blocking on I/O until time 266ms [Q A6 A9 B7]
+time 44ms: Process B1 switching out of CPU; blocking on I/O until time 264ms [Q A6 A9 B7]
 time 45ms: Process A0 (tau 100ms) arrived; added to ready queue [Q A0 A6 A9 B7]
 time 45ms: Process B0 (tau 100ms) arrived; added to ready queue [Q A0 A6 A9 B0 B7]
 time 46ms: Process B2 (tau 100ms) arrived; added to ready queue [Q A0 A6 A9 B0 B2 B7]
@@ -405,171 +406,365 @@ time 157ms: Process A4 (tau 100ms) arrived; added to ready queue [Q A1 A2 A4 A5 
 time 225ms: Process B8 (tau 100ms) arrived; added to ready queue [Q A1 A2 A4 A5 A6 A7 A8 A9 B0 B2 B5 B6 B7 B8 B9]
 time 244ms: Process A0 (tau 100ms) completed a CPU burst; 29 bursts to go [Q A1 A2 A4 A5 A6 A7 A8 A9 B0 B2 B5 B6 B7 B8 B9]
 time 244ms: Recalculated tau for process A0: old tau 100ms ==> new tau 193ms [Q A1 A2 A4 A5 A6 A7 A8 A9 B0 B2 B5 B6 B7 B8 B9]
-time 244ms: Process A0 switching out of CPU; blocking on I/O until time 327ms [Q A1 A2 A4 A5 A6 A7 A8 A9 B0 B2 B5 B6 B7 B8 B9]
+time 244ms: Process A0 switching out of CPU; blocking on I/O until time 325ms [Q A1 A2 A4 A5 A6 A7 A8 A9 B0 B2 B5 B6 B7 B8 B9]
 time 248ms: Process A1 (tau 100ms) started using the CPU for 632ms burst [Q A2 A4 A5 A6 A7 A8 A9 B0 B2 B5 B6 B7 B8 B9]
-time 266ms: Process B1 (tau 31ms) completed I/O; preempting A1 (predicted remaining time 82ms) [Q B1 A2 A4 A5 A6 A7 A8 A9 B0 B2 B5 B6 B7 B8 B9]
-time 270ms: Process B1 (tau 31ms) started using the CPU for 3004ms burst [Q A1 A2 A4 A5 A6 A7 A8 A9 B0 B2 B5 B6 B7 B8 B9]
+616
+time 264ms: Process B1 (tau 31ms) completed I/O; preempting A1 (predicted remaining time 84ms) [Q B1 A2 A4 A5 A6 A7 A8 A9 B0 B2 B5 B6 B7 B8 B9]
+time 268ms: Process B1 (tau 31ms) started using the CPU for 3004ms burst [Q A1 A2 A4 A5 A6 A7 A8 A9 B0 B2 B5 B6 B7 B8 B9]
 time 271ms: Process B3 (tau 100ms) arrived; added to ready queue [Q A1 A2 A4 A5 A6 A7 A8 A9 B0 B2 B3 B5 B6 B7 B8 B9]
 time 324ms: Process A3 (tau 100ms) arrived; added to ready queue [Q A1 A2 A3 A4 A5 A6 A7 A8 A9 B0 B2 B3 B5 B6 B7 B8 B9]
-time 327ms: Process A0 (tau 193ms) completed I/O; added to ready queue [Q A1 A2 A3 A4 A5 A6 A7 A8 A9 B0 B2 B3 B5 B6 B7 B8 B9 A0]
-time 984ms: Process B4 (tau 12ms) completed I/O; added to ready queue [Q B4 A1 A2 A3 A4 A5 A6 A7 A8 A9 B0 B2 B3 B5 B6 B7 B8 B9 A0]
-time 3274ms: Process B1 (tau 31ms) completed a CPU burst; 15 bursts to go [Q B4 A1 A2 A3 A4 A5 A6 A7 A8 A9 B0 B2 B3 B5 B6 B7 B8 B9 A0]
-time 3274ms: Recalculated tau for process B1: old tau 31ms ==> new tau 2886ms [Q B4 A1 A2 A3 A4 A5 A6 A7 A8 A9 B0 B2 B3 B5 B6 B7 B8 B9 A0]
-time 3274ms: Process B1 switching out of CPU; blocking on I/O until time 3417ms [Q B4 A1 A2 A3 A4 A5 A6 A7 A8 A9 B0 B2 B3 B5 B6 B7 B8 B9 A0]
-time 3278ms: Process B4 (tau 12ms) started using the CPU for 3ms burst [Q A1 A2 A3 A4 A5 A6 A7 A8 A9 B0 B2 B3 B5 B6 B7 B8 B9 A0]
-time 3281ms: Process B4 (tau 12ms) completed a CPU burst; 14 bursts to go [Q A1 A2 A3 A4 A5 A6 A7 A8 A9 B0 B2 B3 B5 B6 B7 B8 B9 A0]
-time 3281ms: Recalculated tau for process B4: old tau 12ms ==> new tau 4ms [Q A1 A2 A3 A4 A5 A6 A7 A8 A9 B0 B2 B3 B5 B6 B7 B8 B9 A0]
-time 3281ms: Process B4 switching out of CPU; blocking on I/O until time 4381ms [Q A1 A2 A3 A4 A5 A6 A7 A8 A9 B0 B2 B3 B5 B6 B7 B8 B9 A0]
-time 3285ms: Process A1 (tau 82ms) started using the CPU for 632ms burst [Q A2 A3 A4 A5 A6 A7 A8 A9 B0 B2 B3 B5 B6 B7 B8 B9 A0]
-time 3417ms: Process B1 (tau 2886ms) completed I/O; added to ready queue [Q A2 A3 A4 A5 A6 A7 A8 A9 B0 B2 B3 B5 B6 B7 B8 B9 A0 B1]
-time 3917ms: Process A1 (tau 82ms) completed a CPU burst; 11 bursts to go [Q A2 A3 A4 A5 A6 A7 A8 A9 B0 B2 B3 B5 B6 B7 B8 B9 A0 B1]
-time 3917ms: Recalculated tau for process A1: old tau 82ms ==> new tau 610ms [Q A2 A3 A4 A5 A6 A7 A8 A9 B0 B2 B3 B5 B6 B7 B8 B9 A0 B1]
-time 3917ms: Process A1 switching out of CPU; blocking on I/O until time 3959ms [Q A2 A3 A4 A5 A6 A7 A8 A9 B0 B2 B3 B5 B6 B7 B8 B9 A0 B1]
-time 3921ms: Process A2 (tau 100ms) started using the CPU for 28ms burst [Q A3 A4 A5 A6 A7 A8 A9 B0 B2 B3 B5 B6 B7 B8 B9 A0 B1]
-time 3949ms: Process A2 (tau 100ms) completed a CPU burst; 29 bursts to go [Q A3 A4 A5 A6 A7 A8 A9 B0 B2 B3 B5 B6 B7 B8 B9 A0 B1]
-time 3949ms: Recalculated tau for process A2: old tau 100ms ==> new tau 31ms [Q A3 A4 A5 A6 A7 A8 A9 B0 B2 B3 B5 B6 B7 B8 B9 A0 B1]
-time 3949ms: Process A2 switching out of CPU; blocking on I/O until time 3966ms [Q A3 A4 A5 A6 A7 A8 A9 B0 B2 B3 B5 B6 B7 B8 B9 A0 B1]
-time 3953ms: Process A3 (tau 100ms) started using the CPU for 96ms burst [Q A4 A5 A6 A7 A8 A9 B0 B2 B3 B5 B6 B7 B8 B9 A0 B1]
-time 3959ms: Process A1 (tau 610ms) completed I/O; added to ready queue [Q A4 A5 A6 A7 A8 A9 B0 B2 B3 B5 B6 B7 B8 B9 A0 A1 B1]
-time 3966ms: Process A2 (tau 31ms) completed I/O; preempting A3 (predicted remaining time 87ms) [Q A2 A4 A5 A6 A7 A8 A9 B0 B2 B3 B5 B6 B7 B8 B9 A0 A1 B1]
-time 3970ms: Process A2 (tau 31ms) started using the CPU for 444ms burst [Q A3 A4 A5 A6 A7 A8 A9 B0 B2 B3 B5 B6 B7 B8 B9 A0 A1 B1]
-time 4381ms: Process B4 (tau 4ms) completed I/O; added to ready queue [Q B4 A3 A4 A5 A6 A7 A8 A9 B0 B2 B3 B5 B6 B7 B8 B9 A0 A1 B1]
-time 4414ms: Process A2 (tau 31ms) completed a CPU burst; 28 bursts to go [Q B4 A3 A4 A5 A6 A7 A8 A9 B0 B2 B3 B5 B6 B7 B8 B9 A0 A1 B1]
-time 4414ms: Recalculated tau for process A2: old tau 31ms ==> new tau 428ms [Q B4 A3 A4 A5 A6 A7 A8 A9 B0 B2 B3 B5 B6 B7 B8 B9 A0 A1 B1]
-time 4414ms: Process A2 switching out of CPU; blocking on I/O until time 4877ms [Q B4 A3 A4 A5 A6 A7 A8 A9 B0 B2 B3 B5 B6 B7 B8 B9 A0 A1 B1]
-time 4418ms: Process B4 (tau 4ms) started using the CPU for 285ms burst [Q A3 A4 A5 A6 A7 A8 A9 B0 B2 B3 B5 B6 B7 B8 B9 A0 A1 B1]
-time 4703ms: Process B4 (tau 4ms) completed a CPU burst; 13 bursts to go [Q A3 A4 A5 A6 A7 A8 A9 B0 B2 B3 B5 B6 B7 B8 B9 A0 A1 B1]
-time 4703ms: Recalculated tau for process B4: old tau 4ms ==> new tau 274ms [Q A3 A4 A5 A6 A7 A8 A9 B0 B2 B3 B5 B6 B7 B8 B9 A0 A1 B1]
-time 4703ms: Process B4 switching out of CPU; blocking on I/O until time 4931ms [Q A3 A4 A5 A6 A7 A8 A9 B0 B2 B3 B5 B6 B7 B8 B9 A0 A1 B1]
-time 4707ms: Process A3 (tau 87ms) started using the CPU for 96ms burst [Q A4 A5 A6 A7 A8 A9 B0 B2 B3 B5 B6 B7 B8 B9 A0 A1 B1]
-time 4803ms: Process A3 (tau 87ms) completed a CPU burst; 25 bursts to go [Q A4 A5 A6 A7 A8 A9 B0 B2 B3 B5 B6 B7 B8 B9 A0 A1 B1]
-time 4803ms: Recalculated tau for process A3: old tau 87ms ==> new tau 96ms [Q A4 A5 A6 A7 A8 A9 B0 B2 B3 B5 B6 B7 B8 B9 A0 A1 B1]
-time 4803ms: Process A3 switching out of CPU; blocking on I/O until time 5177ms [Q A4 A5 A6 A7 A8 A9 B0 B2 B3 B5 B6 B7 B8 B9 A0 A1 B1]
-time 4807ms: Process A4 (tau 100ms) started using the CPU for 300ms burst [Q A5 A6 A7 A8 A9 B0 B2 B3 B5 B6 B7 B8 B9 A0 A1 B1]
-time 4877ms: Process A2 (tau 428ms) completed I/O; added to ready queue [Q A5 A6 A7 A8 A9 B0 B2 B3 B5 B6 B7 B8 B9 A0 A2 A1 B1]
-time 4931ms: Process B4 (tau 274ms) completed I/O; added to ready queue [Q A5 A6 A7 A8 A9 B0 B2 B3 B5 B6 B7 B8 B9 A0 B4 A2 A1 B1]
-time 5107ms: Process A4 (tau 100ms) completed a CPU burst; 3 bursts to go [Q A5 A6 A7 A8 A9 B0 B2 B3 B5 B6 B7 B8 B9 A0 B4 A2 A1 B1]
-time 5107ms: Recalculated tau for process A4: old tau 100ms ==> new tau 292ms [Q A5 A6 A7 A8 A9 B0 B2 B3 B5 B6 B7 B8 B9 A0 B4 A2 A1 B1]
-time 5107ms: Process A4 switching out of CPU; blocking on I/O until time 5200ms [Q A5 A6 A7 A8 A9 B0 B2 B3 B5 B6 B7 B8 B9 A0 B4 A2 A1 B1]
-time 5111ms: Process A5 (tau 100ms) started using the CPU for 196ms burst [Q A6 A7 A8 A9 B0 B2 B3 B5 B6 B7 B8 B9 A0 B4 A2 A1 B1]
-time 5177ms: Process A3 (tau 96ms) completed I/O; added to ready queue [Q A3 A6 A7 A8 A9 B0 B2 B3 B5 B6 B7 B8 B9 A0 B4 A2 A1 B1]
-time 5200ms: Process A4 (tau 292ms) completed I/O; added to ready queue [Q A3 A6 A7 A8 A9 B0 B2 B3 B5 B6 B7 B8 B9 A0 B4 A4 A2 A1 B1]
-time 5307ms: Process A5 (tau 100ms) completed a CPU burst; 4 bursts to go [Q A3 A6 A7 A8 A9 B0 B2 B3 B5 B6 B7 B8 B9 A0 B4 A4 A2 A1 B1]
-time 5307ms: Recalculated tau for process A5: old tau 100ms ==> new tau 193ms [Q A3 A6 A7 A8 A9 B0 B2 B3 B5 B6 B7 B8 B9 A0 B4 A4 A2 A1 B1]
-time 5307ms: Process A5 switching out of CPU; blocking on I/O until time 5328ms [Q A3 A6 A7 A8 A9 B0 B2 B3 B5 B6 B7 B8 B9 A0 B4 A4 A2 A1 B1]
-time 5311ms: Process A3 (tau 96ms) started using the CPU for 308ms burst [Q A6 A7 A8 A9 B0 B2 B3 B5 B6 B7 B8 B9 A0 B4 A4 A2 A1 B1]
-time 5328ms: Process A5 (tau 193ms) completed I/O; added to ready queue [Q A6 A7 A8 A9 B0 B2 B3 B5 B6 B7 B8 B9 A0 A5 B4 A4 A2 A1 B1]
-time 5619ms: Process A3 (tau 96ms) completed a CPU burst; 24 bursts to go [Q A6 A7 A8 A9 B0 B2 B3 B5 B6 B7 B8 B9 A0 A5 B4 A4 A2 A1 B1]
-time 5619ms: Recalculated tau for process A3: old tau 96ms ==> new tau 300ms [Q A6 A7 A8 A9 B0 B2 B3 B5 B6 B7 B8 B9 A0 A5 B4 A4 A2 A1 B1]
-time 5619ms: Process A3 switching out of CPU; blocking on I/O until time 5711ms [Q A6 A7 A8 A9 B0 B2 B3 B5 B6 B7 B8 B9 A0 A5 B4 A4 A2 A1 B1]
-time 5623ms: Process A6 (tau 100ms) started using the CPU for 280ms burst [Q A7 A8 A9 B0 B2 B3 B5 B6 B7 B8 B9 A0 A5 B4 A4 A2 A1 B1]
-time 5711ms: Process A3 (tau 300ms) completed I/O; added to ready queue [Q A7 A8 A9 B0 B2 B3 B5 B6 B7 B8 B9 A0 A5 B4 A4 A3 A2 A1 B1]
-time 5903ms: Process A6 (tau 100ms) completed a CPU burst; 17 bursts to go [Q A7 A8 A9 B0 B2 B3 B5 B6 B7 B8 B9 A0 A5 B4 A4 A3 A2 A1 B1]
-time 5903ms: Recalculated tau for process A6: old tau 100ms ==> new tau 273ms [Q A7 A8 A9 B0 B2 B3 B5 B6 B7 B8 B9 A0 A5 B4 A4 A3 A2 A1 B1]
-time 5903ms: Process A6 switching out of CPU; blocking on I/O until time 5979ms [Q A7 A8 A9 B0 B2 B3 B5 B6 B7 B8 B9 A0 A5 B4 A4 A3 A2 A1 B1]
-time 5907ms: Process A7 (tau 100ms) started using the CPU for 84ms burst [Q A8 A9 B0 B2 B3 B5 B6 B7 B8 B9 A0 A5 B4 A4 A3 A2 A1 B1]
-time 5979ms: Process A6 (tau 273ms) completed I/O; added to ready queue [Q A8 A9 B0 B2 B3 B5 B6 B7 B8 B9 A0 A5 A6 B4 A4 A3 A2 A1 B1]
-time 5991ms: Process A7 (tau 100ms) completed a CPU burst; 18 bursts to go [Q A8 A9 B0 B2 B3 B5 B6 B7 B8 B9 A0 A5 A6 B4 A4 A3 A2 A1 B1]
-time 5991ms: Recalculated tau for process A7: old tau 100ms ==> new tau 85ms [Q A8 A9 B0 B2 B3 B5 B6 B7 B8 B9 A0 A5 A6 B4 A4 A3 A2 A1 B1]
-time 5991ms: Process A7 switching out of CPU; blocking on I/O until time 6044ms [Q A8 A9 B0 B2 B3 B5 B6 B7 B8 B9 A0 A5 A6 B4 A4 A3 A2 A1 B1]
-time 5995ms: Process A8 (tau 100ms) started using the CPU for 420ms burst [Q A9 B0 B2 B3 B5 B6 B7 B8 B9 A0 A5 A6 B4 A4 A3 A2 A1 B1]
-time 6044ms: Process A7 (tau 85ms) completed I/O; added to ready queue [Q A7 A9 B0 B2 B3 B5 B6 B7 B8 B9 A0 A5 A6 B4 A4 A3 A2 A1 B1]
-time 6415ms: Process A8 (tau 100ms) completed a CPU burst; 7 bursts to go [Q A7 A9 B0 B2 B3 B5 B6 B7 B8 B9 A0 A5 A6 B4 A4 A3 A2 A1 B1]
-time 6415ms: Recalculated tau for process A8: old tau 100ms ==> new tau 408ms [Q A7 A9 B0 B2 B3 B5 B6 B7 B8 B9 A0 A5 A6 B4 A4 A3 A2 A1 B1]
-time 6415ms: Process A8 switching out of CPU; blocking on I/O until time 6473ms [Q A7 A9 B0 B2 B3 B5 B6 B7 B8 B9 A0 A5 A6 B4 A4 A3 A2 A1 B1]
-time 6419ms: Process A7 (tau 85ms) started using the CPU for 768ms burst [Q A9 B0 B2 B3 B5 B6 B7 B8 B9 A0 A5 A6 B4 A4 A3 A2 A1 B1]
-time 6473ms: Process A8 (tau 408ms) completed I/O; added to ready queue [Q A9 B0 B2 B3 B5 B6 B7 B8 B9 A0 A5 A6 B4 A4 A3 A8 A2 A1 B1]
-time 7187ms: Process A7 (tau 85ms) completed a CPU burst; 17 bursts to go [Q A9 B0 B2 B3 B5 B6 B7 B8 B9 A0 A5 A6 B4 A4 A3 A8 A2 A1 B1]
-time 7187ms: Recalculated tau for process A7: old tau 85ms ==> new tau 741ms [Q A9 B0 B2 B3 B5 B6 B7 B8 B9 A0 A5 A6 B4 A4 A3 A8 A2 A1 B1]
-time 7187ms: Process A7 switching out of CPU; blocking on I/O until time 7312ms [Q A9 B0 B2 B3 B5 B6 B7 B8 B9 A0 A5 A6 B4 A4 A3 A8 A2 A1 B1]
-time 7191ms: Process A9 (tau 100ms) started using the CPU for 360ms burst [Q B0 B2 B3 B5 B6 B7 B8 B9 A0 A5 A6 B4 A4 A3 A8 A2 A1 B1]
-time 7312ms: Process A7 (tau 741ms) completed I/O; added to ready queue [Q B0 B2 B3 B5 B6 B7 B8 B9 A0 A5 A6 B4 A4 A3 A8 A2 A1 A7 B1]
-time 7551ms: Process A9 (tau 100ms) completed a CPU burst; 31 bursts to go [Q B0 B2 B3 B5 B6 B7 B8 B9 A0 A5 A6 B4 A4 A3 A8 A2 A1 A7 B1]
-time 7551ms: Recalculated tau for process A9: old tau 100ms ==> new tau 350ms [Q B0 B2 B3 B5 B6 B7 B8 B9 A0 A5 A6 B4 A4 A3 A8 A2 A1 A7 B1]
-time 7551ms: Process A9 switching out of CPU; blocking on I/O until time 7595ms [Q B0 B2 B3 B5 B6 B7 B8 B9 A0 A5 A6 B4 A4 A3 A8 A2 A1 A7 B1]
-time 7555ms: Process B0 (tau 100ms) started using the CPU for 216ms burst [Q B2 B3 B5 B6 B7 B8 B9 A0 A5 A6 B4 A4 A3 A8 A2 A1 A7 B1]
-time 7595ms: Process A9 (tau 350ms) completed I/O; added to ready queue [Q B2 B3 B5 B6 B7 B8 B9 A0 A5 A6 B4 A4 A3 A9 A8 A2 A1 A7 B1]
-time 7771ms: Process B0 (tau 100ms) completed a CPU burst; 18 bursts to go [Q B2 B3 B5 B6 B7 B8 B9 A0 A5 A6 B4 A4 A3 A9 A8 A2 A1 A7 B1]
-time 7771ms: Recalculated tau for process B0: old tau 100ms ==> new tau 212ms [Q B2 B3 B5 B6 B7 B8 B9 A0 A5 A6 B4 A4 A3 A9 A8 A2 A1 A7 B1]
-time 7771ms: Process B0 switching out of CPU; blocking on I/O until time 7924ms [Q B2 B3 B5 B6 B7 B8 B9 A0 A5 A6 B4 A4 A3 A9 A8 A2 A1 A7 B1]
-time 7775ms: Process B2 (tau 100ms) started using the CPU for 122ms burst [Q B3 B5 B6 B7 B8 B9 A0 A5 A6 B4 A4 A3 A9 A8 A2 A1 A7 B1]
-time 7897ms: Process B2 (tau 100ms) completed a CPU burst; 14 bursts to go [Q B3 B5 B6 B7 B8 B9 A0 A5 A6 B4 A4 A3 A9 A8 A2 A1 A7 B1]
-time 7897ms: Recalculated tau for process B2: old tau 100ms ==> new tau 122ms [Q B3 B5 B6 B7 B8 B9 A0 A5 A6 B4 A4 A3 A9 A8 A2 A1 A7 B1]
-time 7897ms: Process B2 switching out of CPU; blocking on I/O until time 8421ms [Q B3 B5 B6 B7 B8 B9 A0 A5 A6 B4 A4 A3 A9 A8 A2 A1 A7 B1]
-time 7901ms: Process B3 (tau 100ms) started using the CPU for 51ms burst [Q B5 B6 B7 B8 B9 A0 A5 A6 B4 A4 A3 A9 A8 A2 A1 A7 B1]
-time 7924ms: Process B0 (tau 212ms) completed I/O; added to ready queue [Q B5 B6 B7 B8 B9 A0 A5 B0 A6 B4 A4 A3 A9 A8 A2 A1 A7 B1]
-time 7952ms: Process B3 (tau 100ms) completed a CPU burst; 21 bursts to go [Q B5 B6 B7 B8 B9 A0 A5 B0 A6 B4 A4 A3 A9 A8 A2 A1 A7 B1]
-time 7952ms: Recalculated tau for process B3: old tau 100ms ==> new tau 53ms [Q B5 B6 B7 B8 B9 A0 A5 B0 A6 B4 A4 A3 A9 A8 A2 A1 A7 B1]
-time 7952ms: Process B3 switching out of CPU; blocking on I/O until time 10292ms [Q B5 B6 B7 B8 B9 A0 A5 B0 A6 B4 A4 A3 A9 A8 A2 A1 A7 B1]
-time 7956ms: Process B5 (tau 100ms) started using the CPU for 20ms burst [Q B6 B7 B8 B9 A0 A5 B0 A6 B4 A4 A3 A9 A8 A2 A1 A7 B1]
-time 7976ms: Process B5 (tau 100ms) completed a CPU burst; 29 bursts to go [Q B6 B7 B8 B9 A0 A5 B0 A6 B4 A4 A3 A9 A8 A2 A1 A7 B1]
-time 7976ms: Recalculated tau for process B5: old tau 100ms ==> new tau 24ms [Q B6 B7 B8 B9 A0 A5 B0 A6 B4 A4 A3 A9 A8 A2 A1 A7 B1]
-time 7976ms: Process B5 switching out of CPU; blocking on I/O until time 8228ms [Q B6 B7 B8 B9 A0 A5 B0 A6 B4 A4 A3 A9 A8 A2 A1 A7 B1]
-time 7980ms: Process B6 (tau 100ms) started using the CPU for 113ms burst [Q B7 B8 B9 A0 A5 B0 A6 B4 A4 A3 A9 A8 A2 A1 A7 B1]
-time 8093ms: Process B6 (tau 100ms) completed a CPU burst; 4 bursts to go [Q B7 B8 B9 A0 A5 B0 A6 B4 A4 A3 A9 A8 A2 A1 A7 B1]
-time 8093ms: Recalculated tau for process B6: old tau 100ms ==> new tau 113ms [Q B7 B8 B9 A0 A5 B0 A6 B4 A4 A3 A9 A8 A2 A1 A7 B1]
-time 8093ms: Process B6 switching out of CPU; blocking on I/O until time 11321ms [Q B7 B8 B9 A0 A5 B0 A6 B4 A4 A3 A9 A8 A2 A1 A7 B1]
-time 8097ms: Process B7 (tau 100ms) started using the CPU for 71ms burst [Q B8 B9 A0 A5 B0 A6 B4 A4 A3 A9 A8 A2 A1 A7 B1]
-time 8168ms: Process B7 (tau 100ms) completed a CPU burst; 25 bursts to go [Q B8 B9 A0 A5 B0 A6 B4 A4 A3 A9 A8 A2 A1 A7 B1]
-time 8168ms: Recalculated tau for process B7: old tau 100ms ==> new tau 73ms [Q B8 B9 A0 A5 B0 A6 B4 A4 A3 A9 A8 A2 A1 A7 B1]
-time 8168ms: Process B7 switching out of CPU; blocking on I/O until time 11220ms [Q B8 B9 A0 A5 B0 A6 B4 A4 A3 A9 A8 A2 A1 A7 B1]
-time 8172ms: Process B8 (tau 100ms) started using the CPU for 308ms burst [Q B9 A0 A5 B0 A6 B4 A4 A3 A9 A8 A2 A1 A7 B1]
-time 8228ms: Process B5 (tau 24ms) completed I/O; preempting B8 (predicted remaining time 44ms) [Q B5 B9 A0 A5 B0 A6 B4 A4 A3 A9 A8 A2 A1 A7 B1]
-time 8232ms: Process B5 (tau 24ms) started using the CPU for 85ms burst [Q B8 B9 A0 A5 B0 A6 B4 A4 A3 A9 A8 A2 A1 A7 B1]
-time 8317ms: Process B5 (tau 24ms) completed a CPU burst; 28 bursts to go [Q B8 B9 A0 A5 B0 A6 B4 A4 A3 A9 A8 A2 A1 A7 B1]
-time 8317ms: Recalculated tau for process B5: old tau 24ms ==> new tau 83ms [Q B8 B9 A0 A5 B0 A6 B4 A4 A3 A9 A8 A2 A1 A7 B1]
-time 8317ms: Process B5 switching out of CPU; blocking on I/O until time 8561ms [Q B8 B9 A0 A5 B0 A6 B4 A4 A3 A9 A8 A2 A1 A7 B1]
-time 8321ms: Process B8 (tau 44ms) started using the CPU for 308ms burst [Q B9 A0 A5 B0 A6 B4 A4 A3 A9 A8 A2 A1 A7 B1]
-time 8421ms: Process B2 (tau 122ms) completed I/O; added to ready queue [Q B9 B2 A0 A5 B0 A6 B4 A4 A3 A9 A8 A2 A1 A7 B1]
-time 8561ms: Process B5 (tau 83ms) completed I/O; added to ready queue [Q B5 B9 B2 A0 A5 B0 A6 B4 A4 A3 A9 A8 A2 A1 A7 B1]
-time 8629ms: Process B8 (tau 44ms) completed a CPU burst; 19 bursts to go [Q B5 B9 B2 A0 A5 B0 A6 B4 A4 A3 A9 A8 A2 A1 A7 B1]
-time 8629ms: Recalculated tau for process B8: old tau 44ms ==> new tau 298ms [Q B5 B9 B2 A0 A5 B0 A6 B4 A4 A3 A9 A8 A2 A1 A7 B1]
-time 8629ms: Process B8 switching out of CPU; blocking on I/O until time 10913ms [Q B5 B9 B2 A0 A5 B0 A6 B4 A4 A3 A9 A8 A2 A1 A7 B1]
-time 8633ms: Process B5 (tau 83ms) started using the CPU for 20ms burst [Q B9 B2 A0 A5 B0 A6 B4 A4 A3 A9 A8 A2 A1 A7 B1]
-time 8653ms: Process B5 (tau 83ms) completed a CPU burst; 27 bursts to go [Q B9 B2 A0 A5 B0 A6 B4 A4 A3 A9 A8 A2 A1 A7 B1]
-time 8653ms: Recalculated tau for process B5: old tau 83ms ==> new tau 23ms [Q B9 B2 A0 A5 B0 A6 B4 A4 A3 A9 A8 A2 A1 A7 B1]
-time 8653ms: Process B5 switching out of CPU; blocking on I/O until time 9081ms [Q B9 B2 A0 A5 B0 A6 B4 A4 A3 A9 A8 A2 A1 A7 B1]
-time 8657ms: Process B9 (tau 100ms) started using the CPU for 22ms burst [Q B2 A0 A5 B0 A6 B4 A4 A3 A9 A8 A2 A1 A7 B1]
-time 8679ms: Process B9 (tau 100ms) completed a CPU burst; 10 bursts to go [Q B2 A0 A5 B0 A6 B4 A4 A3 A9 A8 A2 A1 A7 B1]
-time 8679ms: Recalculated tau for process B9: old tau 100ms ==> new tau 26ms [Q B2 A0 A5 B0 A6 B4 A4 A3 A9 A8 A2 A1 A7 B1]
-time 8679ms: Process B9 switching out of CPU; blocking on I/O until time 9291ms [Q B2 A0 A5 B0 A6 B4 A4 A3 A9 A8 A2 A1 A7 B1]
-time 8683ms: Process B2 (tau 122ms) started using the CPU for 183ms burst [Q A0 A5 B0 A6 B4 A4 A3 A9 A8 A2 A1 A7 B1]
-time 8866ms: Process B2 (tau 122ms) completed a CPU burst; 13 bursts to go [Q A0 A5 B0 A6 B4 A4 A3 A9 A8 A2 A1 A7 B1]
-time 8866ms: Recalculated tau for process B2: old tau 122ms ==> new tau 181ms [Q A0 A5 B0 A6 B4 A4 A3 A9 A8 A2 A1 A7 B1]
-time 8866ms: Process B2 switching out of CPU; blocking on I/O until time 9182ms [Q A0 A5 B0 A6 B4 A4 A3 A9 A8 A2 A1 A7 B1]
-time 8870ms: Process A0 (tau 193ms) started using the CPU for 1096ms burst [Q A5 B0 A6 B4 A4 A3 A9 A8 A2 A1 A7 B1]
-time 9081ms: Process B5 (tau 23ms) completed I/O; added to ready queue [Q B5 A5 B0 A6 B4 A4 A3 A9 A8 A2 A1 A7 B1]
-time 9182ms: Process B2 (tau 181ms) completed I/O; added to ready queue [Q B5 B2 A5 B0 A6 B4 A4 A3 A9 A8 A2 A1 A7 B1]
-time 9291ms: Process B9 (tau 26ms) completed I/O; added to ready queue [Q B5 B9 B2 A5 B0 A6 B4 A4 A3 A9 A8 A2 A1 A7 B1]
-time 9966ms: Process A0 (tau 193ms) completed a CPU burst; 28 bursts to go [Q B5 B9 B2 A5 B0 A6 B4 A4 A3 A9 A8 A2 A1 A7 B1]
-time 9966ms: Recalculated tau for process A0: old tau 193ms ==> new tau 1060ms [Q B5 B9 B2 A5 B0 A6 B4 A4 A3 A9 A8 A2 A1 A7 B1]
-time 9966ms: Process A0 switching out of CPU; blocking on I/O until time 10055ms [Q B5 B9 B2 A5 B0 A6 B4 A4 A3 A9 A8 A2 A1 A7 B1]
-time 9970ms: Process B5 (tau 23ms) started using the CPU for 14ms burst [Q B9 B2 A5 B0 A6 B4 A4 A3 A9 A8 A2 A1 A7 B1]
-time 9984ms: Process B5 (tau 23ms) completed a CPU burst; 26 bursts to go [Q B9 B2 A5 B0 A6 B4 A4 A3 A9 A8 A2 A1 A7 B1]
-time 9984ms: Recalculated tau for process B5: old tau 23ms ==> new tau 15ms [Q B9 B2 A5 B0 A6 B4 A4 A3 A9 A8 A2 A1 A7 B1]
-time 9984ms: Process B5 switching out of CPU; blocking on I/O until time 11108ms [Q B9 B2 A5 B0 A6 B4 A4 A3 A9 A8 A2 A1 A7 B1]
-time 9988ms: Process B9 (tau 26ms) started using the CPU for 142ms burst [Q B2 A5 B0 A6 B4 A4 A3 A9 A8 A2 A1 A7 B1]
-time 14438ms: Process A5 terminated [Q B6 B5 B3 B2 B9 A6 B4 A4 B8 A3 A9 A8 A2 A1 A7 A0 B0 B1]
-time 18237ms: Process B6 terminated [Q A3 B2 B3 B8 B4 B9 B5 A6 A9 A8 A2 A1 A7 A0 A4 B0 B1]
-time 22125ms: Process B9 terminated [Q B5 B3 A8 A2 A3 A1 A6 A7 A0 A4 B0 B1]
-time 24486ms: Process B2 terminated [Q A2 A3 A1 A9 A6 A7 A8 A0 A4 B0 B1]
-time 32807ms: Process B4 terminated [Q B7 A1 B5 A9 A6 A2 A7 A8 A3 A0 A4 B0 B1]
-time 38180ms: Process B8 terminated [Q B5 A9 B7 A6 A2 A7 A8 A3 A0 A4 B0 A1 B1]
-time 42436ms: Process B5 terminated [Q B3 A9 A6 A2 A7 A8 A3 A0 A4 B0 A1 B1]
-time 45220ms: Process B3 terminated [Q A9 A2 A7 A8 A3 A0 A4 B0 A1 B1]
-time 45927ms: Process B7 terminated [Q A9 A2 A7 A8 A3 A0 A4 B0 A6 A1 B1]
-time 65677ms: Process A2 terminated [Q A0 A3 A4 B0 A6 A7 A1 A9 A8 B1]
-time 73236ms: Process A4 terminated [Q B0 A6 A7 A1 A9 A3 A8 B1]
-time 88851ms: Process B0 terminated [Q A6 A7 A1 A9 A3 A0 A8 B1]
-time 93126ms: Process A6 terminated [Q A7 A1 A9 A3 A0 A8 B1]
-time 99089ms: Process A7 terminated [Q A9 A3 A0 A8 B1]
-time 103606ms: Process A1 terminated [Q A9 A3 A0 A8 B1]
-time 105358ms: Process A3 terminated [Q A0 A8 B1]
-time 107981ms: Process A0 terminated [Q A9 A8 B1]
-time 111065ms: Process A8 terminated [Q B1]
-time 119016ms: Process A9 terminated [Q empty]
-time 120037ms: Process B1 terminated [Q empty]
-time 120039ms: Simulator ended for FCFS [Q empty]
+time 325ms: Process A0 (tau 193ms) completed I/O; added to ready queue [Q A1 A2 A3 A4 A5 A6 A7 A8 A9 B0 B2 B3 B5 B6 B7 B8 B9 A0]
+time 982ms: Process B4 (tau 12ms) completed I/O; added to ready queue [Q B4 A1 A2 A3 A4 A5 A6 A7 A8 A9 B0 B2 B3 B5 B6 B7 B8 B9 A0]
+time 3272ms: Process B1 (tau 31ms) completed a CPU burst; 15 bursts to go [Q B4 A1 A2 A3 A4 A5 A6 A7 A8 A9 B0 B2 B3 B5 B6 B7 B8 B9 A0]
+time 3272ms: Recalculated tau for process B1: old tau 31ms ==> new tau 2886ms [Q B4 A1 A2 A3 A4 A5 A6 A7 A8 A9 B0 B2 B3 B5 B6 B7 B8 B9 A0]
+time 3272ms: Process B1 switching out of CPU; blocking on I/O until time 3413ms [Q B4 A1 A2 A3 A4 A5 A6 A7 A8 A9 B0 B2 B3 B5 B6 B7 B8 B9 A0]
+time 3276ms: Process B4 (tau 12ms) started using the CPU for 3ms burst [Q A1 A2 A3 A4 A5 A6 A7 A8 A9 B0 B2 B3 B5 B6 B7 B8 B9 A0]
+time 3279ms: Process B4 (tau 12ms) completed a CPU burst; 14 bursts to go [Q A1 A2 A3 A4 A5 A6 A7 A8 A9 B0 B2 B3 B5 B6 B7 B8 B9 A0]
+time 3279ms: Recalculated tau for process B4: old tau 12ms ==> new tau 4ms [Q A1 A2 A3 A4 A5 A6 A7 A8 A9 B0 B2 B3 B5 B6 B7 B8 B9 A0]
+time 3279ms: Process B4 switching out of CPU; blocking on I/O until time 4377ms [Q A1 A2 A3 A4 A5 A6 A7 A8 A9 B0 B2 B3 B5 B6 B7 B8 B9 A0]
+time 3283ms: Process A1 (tau 100ms) started using the CPU for remaining 0ms of 632ms burst [Q A2 A3 A4 A5 A6 A7 A8 A9 B0 B2 B3 B5 B6 B7 B8 B9 A0]
+time 3413ms: Process B1 (tau 2886ms) completed I/O; added to ready queue [Q A2 A3 A4 A5 A6 A7 A8 A9 B0 B2 B3 B5 B6 B7 B8 B9 A0 B1]
+time 3915ms: Process A1 (tau 100ms) completed a CPU burst; 11 bursts to go [Q A2 A3 A4 A5 A6 A7 A8 A9 B0 B2 B3 B5 B6 B7 B8 B9 A0 B1]
+time 3915ms: Recalculated tau for process A1: old tau 100ms ==> new tau 611ms [Q A2 A3 A4 A5 A6 A7 A8 A9 B0 B2 B3 B5 B6 B7 B8 B9 A0 B1]
+time 3915ms: Process A1 switching out of CPU; blocking on I/O until time 3955ms [Q A2 A3 A4 A5 A6 A7 A8 A9 B0 B2 B3 B5 B6 B7 B8 B9 A0 B1]
+time 3919ms: Process A2 (tau 100ms) started using the CPU for 28ms burst [Q A3 A4 A5 A6 A7 A8 A9 B0 B2 B3 B5 B6 B7 B8 B9 A0 B1]
+time 3947ms: Process A2 (tau 100ms) completed a CPU burst; 29 bursts to go [Q A3 A4 A5 A6 A7 A8 A9 B0 B2 B3 B5 B6 B7 B8 B9 A0 B1]
+time 3947ms: Recalculated tau for process A2: old tau 100ms ==> new tau 31ms [Q A3 A4 A5 A6 A7 A8 A9 B0 B2 B3 B5 B6 B7 B8 B9 A0 B1]
+time 3947ms: Process A2 switching out of CPU; blocking on I/O until time 3962ms [Q A3 A4 A5 A6 A7 A8 A9 B0 B2 B3 B5 B6 B7 B8 B9 A0 B1]
+time 3951ms: Process A3 (tau 100ms) started using the CPU for 96ms burst [Q A4 A5 A6 A7 A8 A9 B0 B2 B3 B5 B6 B7 B8 B9 A0 B1]
+time 3955ms: Process A1 (tau 611ms) completed I/O; added to ready queue [Q A4 A5 A6 A7 A8 A9 B0 B2 B3 B5 B6 B7 B8 B9 A0 A1 B1]
+85
+time 3962ms: Process A2 (tau 31ms) completed I/O; preempting A3 (predicted remaining time 89ms) [Q A2 A4 A5 A6 A7 A8 A9 B0 B2 B3 B5 B6 B7 B8 B9 A0 A1 B1]
+time 3966ms: Process A2 (tau 31ms) started using the CPU for 444ms burst [Q A3 A4 A5 A6 A7 A8 A9 B0 B2 B3 B5 B6 B7 B8 B9 A0 A1 B1]
+time 4377ms: Process B4 (tau 4ms) completed I/O; added to ready queue [Q B4 A3 A4 A5 A6 A7 A8 A9 B0 B2 B3 B5 B6 B7 B8 B9 A0 A1 B1]
+time 4410ms: Process A2 (tau 31ms) completed a CPU burst; 28 bursts to go [Q B4 A3 A4 A5 A6 A7 A8 A9 B0 B2 B3 B5 B6 B7 B8 B9 A0 A1 B1]
+time 4410ms: Recalculated tau for process A2: old tau 31ms ==> new tau 428ms [Q B4 A3 A4 A5 A6 A7 A8 A9 B0 B2 B3 B5 B6 B7 B8 B9 A0 A1 B1]
+time 4410ms: Process A2 switching out of CPU; blocking on I/O until time 4871ms [Q B4 A3 A4 A5 A6 A7 A8 A9 B0 B2 B3 B5 B6 B7 B8 B9 A0 A1 B1]
+time 4414ms: Process B4 (tau 4ms) started using the CPU for 285ms burst [Q A3 A4 A5 A6 A7 A8 A9 B0 B2 B3 B5 B6 B7 B8 B9 A0 A1 B1]
+time 4699ms: Process B4 (tau 4ms) completed a CPU burst; 13 bursts to go [Q A3 A4 A5 A6 A7 A8 A9 B0 B2 B3 B5 B6 B7 B8 B9 A0 A1 B1]
+time 4699ms: Recalculated tau for process B4: old tau 4ms ==> new tau 274ms [Q A3 A4 A5 A6 A7 A8 A9 B0 B2 B3 B5 B6 B7 B8 B9 A0 A1 B1]
+time 4699ms: Process B4 switching out of CPU; blocking on I/O until time 4925ms [Q A3 A4 A5 A6 A7 A8 A9 B0 B2 B3 B5 B6 B7 B8 B9 A0 A1 B1]
+time 4703ms: Process A3 (tau 100ms) started using the CPU for remaining 0ms of 96ms burst [Q A4 A5 A6 A7 A8 A9 B0 B2 B3 B5 B6 B7 B8 B9 A0 A1 B1]
+time 4799ms: Process A3 (tau 100ms) completed a CPU burst; 25 bursts to go [Q A4 A5 A6 A7 A8 A9 B0 B2 B3 B5 B6 B7 B8 B9 A0 A1 B1]
+time 4799ms: Recalculated tau for process A3: old tau 100ms ==> new tau 97ms [Q A4 A5 A6 A7 A8 A9 B0 B2 B3 B5 B6 B7 B8 B9 A0 A1 B1]
+time 4799ms: Process A3 switching out of CPU; blocking on I/O until time 5171ms [Q A4 A5 A6 A7 A8 A9 B0 B2 B3 B5 B6 B7 B8 B9 A0 A1 B1]
+time 4803ms: Process A4 (tau 100ms) started using the CPU for 300ms burst [Q A5 A6 A7 A8 A9 B0 B2 B3 B5 B6 B7 B8 B9 A0 A1 B1]
+time 4871ms: Process A2 (tau 428ms) completed I/O; added to ready queue [Q A5 A6 A7 A8 A9 B0 B2 B3 B5 B6 B7 B8 B9 A0 A2 A1 B1]
+time 4925ms: Process B4 (tau 274ms) completed I/O; added to ready queue [Q A5 A6 A7 A8 A9 B0 B2 B3 B5 B6 B7 B8 B9 A0 B4 A2 A1 B1]
+time 5103ms: Process A4 (tau 100ms) completed a CPU burst; 3 bursts to go [Q A5 A6 A7 A8 A9 B0 B2 B3 B5 B6 B7 B8 B9 A0 B4 A2 A1 B1]
+time 5103ms: Recalculated tau for process A4: old tau 100ms ==> new tau 292ms [Q A5 A6 A7 A8 A9 B0 B2 B3 B5 B6 B7 B8 B9 A0 B4 A2 A1 B1]
+time 5103ms: Process A4 switching out of CPU; blocking on I/O until time 5194ms [Q A5 A6 A7 A8 A9 B0 B2 B3 B5 B6 B7 B8 B9 A0 B4 A2 A1 B1]
+time 5107ms: Process A5 (tau 100ms) started using the CPU for 196ms burst [Q A6 A7 A8 A9 B0 B2 B3 B5 B6 B7 B8 B9 A0 B4 A2 A1 B1]
+time 5171ms: Process A3 (tau 97ms) completed I/O; added to ready queue [Q A3 A6 A7 A8 A9 B0 B2 B3 B5 B6 B7 B8 B9 A0 B4 A2 A1 B1]
+time 5194ms: Process A4 (tau 292ms) completed I/O; added to ready queue [Q A3 A6 A7 A8 A9 B0 B2 B3 B5 B6 B7 B8 B9 A0 B4 A4 A2 A1 B1]
+time 5303ms: Process A5 (tau 100ms) completed a CPU burst; 4 bursts to go [Q A3 A6 A7 A8 A9 B0 B2 B3 B5 B6 B7 B8 B9 A0 B4 A4 A2 A1 B1]
+time 5303ms: Recalculated tau for process A5: old tau 100ms ==> new tau 193ms [Q A3 A6 A7 A8 A9 B0 B2 B3 B5 B6 B7 B8 B9 A0 B4 A4 A2 A1 B1]
+time 5303ms: Process A5 switching out of CPU; blocking on I/O until time 5322ms [Q A3 A6 A7 A8 A9 B0 B2 B3 B5 B6 B7 B8 B9 A0 B4 A4 A2 A1 B1]
+time 5307ms: Process A3 (tau 97ms) started using the CPU for 308ms burst [Q A6 A7 A8 A9 B0 B2 B3 B5 B6 B7 B8 B9 A0 B4 A4 A2 A1 B1]
+time 5322ms: Process A5 (tau 193ms) completed I/O; added to ready queue [Q A6 A7 A8 A9 B0 B2 B3 B5 B6 B7 B8 B9 A0 A5 B4 A4 A2 A1 B1]
+time 5615ms: Process A3 (tau 97ms) completed a CPU burst; 24 bursts to go [Q A6 A7 A8 A9 B0 B2 B3 B5 B6 B7 B8 B9 A0 A5 B4 A4 A2 A1 B1]
+time 5615ms: Recalculated tau for process A3: old tau 97ms ==> new tau 300ms [Q A6 A7 A8 A9 B0 B2 B3 B5 B6 B7 B8 B9 A0 A5 B4 A4 A2 A1 B1]
+time 5615ms: Process A3 switching out of CPU; blocking on I/O until time 5705ms [Q A6 A7 A8 A9 B0 B2 B3 B5 B6 B7 B8 B9 A0 A5 B4 A4 A2 A1 B1]
+time 5619ms: Process A6 (tau 100ms) started using the CPU for 280ms burst [Q A7 A8 A9 B0 B2 B3 B5 B6 B7 B8 B9 A0 A5 B4 A4 A2 A1 B1]
+time 5705ms: Process A3 (tau 300ms) completed I/O; added to ready queue [Q A7 A8 A9 B0 B2 B3 B5 B6 B7 B8 B9 A0 A5 B4 A4 A3 A2 A1 B1]
+time 5899ms: Process A6 (tau 100ms) completed a CPU burst; 17 bursts to go [Q A7 A8 A9 B0 B2 B3 B5 B6 B7 B8 B9 A0 A5 B4 A4 A3 A2 A1 B1]
+time 5899ms: Recalculated tau for process A6: old tau 100ms ==> new tau 273ms [Q A7 A8 A9 B0 B2 B3 B5 B6 B7 B8 B9 A0 A5 B4 A4 A3 A2 A1 B1]
+time 5899ms: Process A6 switching out of CPU; blocking on I/O until time 5973ms [Q A7 A8 A9 B0 B2 B3 B5 B6 B7 B8 B9 A0 A5 B4 A4 A3 A2 A1 B1]
+time 5903ms: Process A7 (tau 100ms) started using the CPU for 84ms burst [Q A8 A9 B0 B2 B3 B5 B6 B7 B8 B9 A0 A5 B4 A4 A3 A2 A1 B1]
+time 5973ms: Process A6 (tau 273ms) completed I/O; added to ready queue [Q A8 A9 B0 B2 B3 B5 B6 B7 B8 B9 A0 A5 A6 B4 A4 A3 A2 A1 B1]
+time 5987ms: Process A7 (tau 100ms) completed a CPU burst; 18 bursts to go [Q A8 A9 B0 B2 B3 B5 B6 B7 B8 B9 A0 A5 A6 B4 A4 A3 A2 A1 B1]
+time 5987ms: Recalculated tau for process A7: old tau 100ms ==> new tau 85ms [Q A8 A9 B0 B2 B3 B5 B6 B7 B8 B9 A0 A5 A6 B4 A4 A3 A2 A1 B1]
+time 5987ms: Process A7 switching out of CPU; blocking on I/O until time 6038ms [Q A8 A9 B0 B2 B3 B5 B6 B7 B8 B9 A0 A5 A6 B4 A4 A3 A2 A1 B1]
+time 5991ms: Process A8 (tau 100ms) started using the CPU for 420ms burst [Q A9 B0 B2 B3 B5 B6 B7 B8 B9 A0 A5 A6 B4 A4 A3 A2 A1 B1]
+time 6038ms: Process A7 (tau 85ms) completed I/O; added to ready queue [Q A7 A9 B0 B2 B3 B5 B6 B7 B8 B9 A0 A5 A6 B4 A4 A3 A2 A1 B1]
+time 6411ms: Process A8 (tau 100ms) completed a CPU burst; 7 bursts to go [Q A7 A9 B0 B2 B3 B5 B6 B7 B8 B9 A0 A5 A6 B4 A4 A3 A2 A1 B1]
+time 6411ms: Recalculated tau for process A8: old tau 100ms ==> new tau 408ms [Q A7 A9 B0 B2 B3 B5 B6 B7 B8 B9 A0 A5 A6 B4 A4 A3 A2 A1 B1]
+time 6411ms: Process A8 switching out of CPU; blocking on I/O until time 6467ms [Q A7 A9 B0 B2 B3 B5 B6 B7 B8 B9 A0 A5 A6 B4 A4 A3 A2 A1 B1]
+time 6415ms: Process A7 (tau 85ms) started using the CPU for 768ms burst [Q A9 B0 B2 B3 B5 B6 B7 B8 B9 A0 A5 A6 B4 A4 A3 A2 A1 B1]
+time 6467ms: Process A8 (tau 408ms) completed I/O; added to ready queue [Q A9 B0 B2 B3 B5 B6 B7 B8 B9 A0 A5 A6 B4 A4 A3 A8 A2 A1 B1]
+time 7183ms: Process A7 (tau 85ms) completed a CPU burst; 17 bursts to go [Q A9 B0 B2 B3 B5 B6 B7 B8 B9 A0 A5 A6 B4 A4 A3 A8 A2 A1 B1]
+time 7183ms: Recalculated tau for process A7: old tau 85ms ==> new tau 741ms [Q A9 B0 B2 B3 B5 B6 B7 B8 B9 A0 A5 A6 B4 A4 A3 A8 A2 A1 B1]
+time 7183ms: Process A7 switching out of CPU; blocking on I/O until time 7306ms [Q A9 B0 B2 B3 B5 B6 B7 B8 B9 A0 A5 A6 B4 A4 A3 A8 A2 A1 B1]
+time 7187ms: Process A9 (tau 100ms) started using the CPU for 360ms burst [Q B0 B2 B3 B5 B6 B7 B8 B9 A0 A5 A6 B4 A4 A3 A8 A2 A1 B1]
+time 7306ms: Process A7 (tau 741ms) completed I/O; added to ready queue [Q B0 B2 B3 B5 B6 B7 B8 B9 A0 A5 A6 B4 A4 A3 A8 A2 A1 A7 B1]
+time 7547ms: Process A9 (tau 100ms) completed a CPU burst; 31 bursts to go [Q B0 B2 B3 B5 B6 B7 B8 B9 A0 A5 A6 B4 A4 A3 A8 A2 A1 A7 B1]
+time 7547ms: Recalculated tau for process A9: old tau 100ms ==> new tau 350ms [Q B0 B2 B3 B5 B6 B7 B8 B9 A0 A5 A6 B4 A4 A3 A8 A2 A1 A7 B1]
+time 7547ms: Process A9 switching out of CPU; blocking on I/O until time 7589ms [Q B0 B2 B3 B5 B6 B7 B8 B9 A0 A5 A6 B4 A4 A3 A8 A2 A1 A7 B1]
+time 7551ms: Process B0 (tau 100ms) started using the CPU for 216ms burst [Q B2 B3 B5 B6 B7 B8 B9 A0 A5 A6 B4 A4 A3 A8 A2 A1 A7 B1]
+time 7589ms: Process A9 (tau 350ms) completed I/O; added to ready queue [Q B2 B3 B5 B6 B7 B8 B9 A0 A5 A6 B4 A4 A3 A9 A8 A2 A1 A7 B1]
+time 7767ms: Process B0 (tau 100ms) completed a CPU burst; 18 bursts to go [Q B2 B3 B5 B6 B7 B8 B9 A0 A5 A6 B4 A4 A3 A9 A8 A2 A1 A7 B1]
+time 7767ms: Recalculated tau for process B0: old tau 100ms ==> new tau 212ms [Q B2 B3 B5 B6 B7 B8 B9 A0 A5 A6 B4 A4 A3 A9 A8 A2 A1 A7 B1]
+time 7767ms: Process B0 switching out of CPU; blocking on I/O until time 7918ms [Q B2 B3 B5 B6 B7 B8 B9 A0 A5 A6 B4 A4 A3 A9 A8 A2 A1 A7 B1]
+time 7771ms: Process B2 (tau 100ms) started using the CPU for 122ms burst [Q B3 B5 B6 B7 B8 B9 A0 A5 A6 B4 A4 A3 A9 A8 A2 A1 A7 B1]
+time 7893ms: Process B2 (tau 100ms) completed a CPU burst; 14 bursts to go [Q B3 B5 B6 B7 B8 B9 A0 A5 A6 B4 A4 A3 A9 A8 A2 A1 A7 B1]
+time 7893ms: Recalculated tau for process B2: old tau 100ms ==> new tau 122ms [Q B3 B5 B6 B7 B8 B9 A0 A5 A6 B4 A4 A3 A9 A8 A2 A1 A7 B1]
+time 7893ms: Process B2 switching out of CPU; blocking on I/O until time 8415ms [Q B3 B5 B6 B7 B8 B9 A0 A5 A6 B4 A4 A3 A9 A8 A2 A1 A7 B1]
+time 7897ms: Process B3 (tau 100ms) started using the CPU for 51ms burst [Q B5 B6 B7 B8 B9 A0 A5 A6 B4 A4 A3 A9 A8 A2 A1 A7 B1]
+time 7918ms: Process B0 (tau 212ms) completed I/O; added to ready queue [Q B5 B6 B7 B8 B9 A0 A5 B0 A6 B4 A4 A3 A9 A8 A2 A1 A7 B1]
+time 7948ms: Process B3 (tau 100ms) completed a CPU burst; 21 bursts to go [Q B5 B6 B7 B8 B9 A0 A5 B0 A6 B4 A4 A3 A9 A8 A2 A1 A7 B1]
+time 7948ms: Recalculated tau for process B3: old tau 100ms ==> new tau 53ms [Q B5 B6 B7 B8 B9 A0 A5 B0 A6 B4 A4 A3 A9 A8 A2 A1 A7 B1]
+time 7948ms: Process B3 switching out of CPU; blocking on I/O until time 10286ms [Q B5 B6 B7 B8 B9 A0 A5 B0 A6 B4 A4 A3 A9 A8 A2 A1 A7 B1]
+time 7952ms: Process B5 (tau 100ms) started using the CPU for 20ms burst [Q B6 B7 B8 B9 A0 A5 B0 A6 B4 A4 A3 A9 A8 A2 A1 A7 B1]
+time 7972ms: Process B5 (tau 100ms) completed a CPU burst; 29 bursts to go [Q B6 B7 B8 B9 A0 A5 B0 A6 B4 A4 A3 A9 A8 A2 A1 A7 B1]
+time 7972ms: Recalculated tau for process B5: old tau 100ms ==> new tau 24ms [Q B6 B7 B8 B9 A0 A5 B0 A6 B4 A4 A3 A9 A8 A2 A1 A7 B1]
+time 7972ms: Process B5 switching out of CPU; blocking on I/O until time 8222ms [Q B6 B7 B8 B9 A0 A5 B0 A6 B4 A4 A3 A9 A8 A2 A1 A7 B1]
+time 7976ms: Process B6 (tau 100ms) started using the CPU for 113ms burst [Q B7 B8 B9 A0 A5 B0 A6 B4 A4 A3 A9 A8 A2 A1 A7 B1]
+time 8089ms: Process B6 (tau 100ms) completed a CPU burst; 4 bursts to go [Q B7 B8 B9 A0 A5 B0 A6 B4 A4 A3 A9 A8 A2 A1 A7 B1]
+time 8089ms: Recalculated tau for process B6: old tau 100ms ==> new tau 113ms [Q B7 B8 B9 A0 A5 B0 A6 B4 A4 A3 A9 A8 A2 A1 A7 B1]
+time 8089ms: Process B6 switching out of CPU; blocking on I/O until time 11315ms [Q B7 B8 B9 A0 A5 B0 A6 B4 A4 A3 A9 A8 A2 A1 A7 B1]
+time 8093ms: Process B7 (tau 100ms) started using the CPU for 71ms burst [Q B8 B9 A0 A5 B0 A6 B4 A4 A3 A9 A8 A2 A1 A7 B1]
+time 8164ms: Process B7 (tau 100ms) completed a CPU burst; 25 bursts to go [Q B8 B9 A0 A5 B0 A6 B4 A4 A3 A9 A8 A2 A1 A7 B1]
+time 8164ms: Recalculated tau for process B7: old tau 100ms ==> new tau 73ms [Q B8 B9 A0 A5 B0 A6 B4 A4 A3 A9 A8 A2 A1 A7 B1]
+time 8164ms: Process B7 switching out of CPU; blocking on I/O until time 11214ms [Q B8 B9 A0 A5 B0 A6 B4 A4 A3 A9 A8 A2 A1 A7 B1]
+time 8168ms: Process B8 (tau 100ms) started using the CPU for 308ms burst [Q B9 A0 A5 B0 A6 B4 A4 A3 A9 A8 A2 A1 A7 B1]
+254
+time 8222ms: Process B5 (tau 24ms) completed I/O; preempting B8 (predicted remaining time 46ms) [Q B5 B9 A0 A5 B0 A6 B4 A4 A3 A9 A8 A2 A1 A7 B1]
+time 8226ms: Process B5 (tau 24ms) started using the CPU for 85ms burst [Q B8 B9 A0 A5 B0 A6 B4 A4 A3 A9 A8 A2 A1 A7 B1]
+time 8311ms: Process B5 (tau 24ms) completed a CPU burst; 28 bursts to go [Q B8 B9 A0 A5 B0 A6 B4 A4 A3 A9 A8 A2 A1 A7 B1]
+time 8311ms: Recalculated tau for process B5: old tau 24ms ==> new tau 83ms [Q B8 B9 A0 A5 B0 A6 B4 A4 A3 A9 A8 A2 A1 A7 B1]
+time 8311ms: Process B5 switching out of CPU; blocking on I/O until time 8553ms [Q B8 B9 A0 A5 B0 A6 B4 A4 A3 A9 A8 A2 A1 A7 B1]
+time 8315ms: Process B8 (tau 100ms) started using the CPU for remaining 0ms of 308ms burst [Q B9 A0 A5 B0 A6 B4 A4 A3 A9 A8 A2 A1 A7 B1]
+time 8415ms: Process B2 (tau 122ms) completed I/O; added to ready queue [Q B9 B2 A0 A5 B0 A6 B4 A4 A3 A9 A8 A2 A1 A7 B1]
+time 8553ms: Process B5 (tau 83ms) completed I/O; added to ready queue [Q B5 B9 B2 A0 A5 B0 A6 B4 A4 A3 A9 A8 A2 A1 A7 B1]
+time 8623ms: Process B8 (tau 100ms) completed a CPU burst; 19 bursts to go [Q B5 B9 B2 A0 A5 B0 A6 B4 A4 A3 A9 A8 A2 A1 A7 B1]
+time 8623ms: Recalculated tau for process B8: old tau 100ms ==> new tau 300ms [Q B5 B9 B2 A0 A5 B0 A6 B4 A4 A3 A9 A8 A2 A1 A7 B1]
+time 8623ms: Process B8 switching out of CPU; blocking on I/O until time 10905ms [Q B5 B9 B2 A0 A5 B0 A6 B4 A4 A3 A9 A8 A2 A1 A7 B1]
+time 8627ms: Process B5 (tau 83ms) started using the CPU for 20ms burst [Q B9 B2 A0 A5 B0 A6 B4 A4 A3 A9 A8 A2 A1 A7 B1]
+time 8647ms: Process B5 (tau 83ms) completed a CPU burst; 27 bursts to go [Q B9 B2 A0 A5 B0 A6 B4 A4 A3 A9 A8 A2 A1 A7 B1]
+time 8647ms: Recalculated tau for process B5: old tau 83ms ==> new tau 23ms [Q B9 B2 A0 A5 B0 A6 B4 A4 A3 A9 A8 A2 A1 A7 B1]
+time 8647ms: Process B5 switching out of CPU; blocking on I/O until time 9073ms [Q B9 B2 A0 A5 B0 A6 B4 A4 A3 A9 A8 A2 A1 A7 B1]
+time 8651ms: Process B9 (tau 100ms) started using the CPU for 22ms burst [Q B2 A0 A5 B0 A6 B4 A4 A3 A9 A8 A2 A1 A7 B1]
+time 8673ms: Process B9 (tau 100ms) completed a CPU burst; 10 bursts to go [Q B2 A0 A5 B0 A6 B4 A4 A3 A9 A8 A2 A1 A7 B1]
+time 8673ms: Recalculated tau for process B9: old tau 100ms ==> new tau 26ms [Q B2 A0 A5 B0 A6 B4 A4 A3 A9 A8 A2 A1 A7 B1]
+time 8673ms: Process B9 switching out of CPU; blocking on I/O until time 9283ms [Q B2 A0 A5 B0 A6 B4 A4 A3 A9 A8 A2 A1 A7 B1]
+time 8677ms: Process B2 (tau 122ms) started using the CPU for 183ms burst [Q A0 A5 B0 A6 B4 A4 A3 A9 A8 A2 A1 A7 B1]
+time 8860ms: Process B2 (tau 122ms) completed a CPU burst; 13 bursts to go [Q A0 A5 B0 A6 B4 A4 A3 A9 A8 A2 A1 A7 B1]
+time 8860ms: Recalculated tau for process B2: old tau 122ms ==> new tau 181ms [Q A0 A5 B0 A6 B4 A4 A3 A9 A8 A2 A1 A7 B1]
+time 8860ms: Process B2 switching out of CPU; blocking on I/O until time 9174ms [Q A0 A5 B0 A6 B4 A4 A3 A9 A8 A2 A1 A7 B1]
+time 8864ms: Process A0 (tau 193ms) started using the CPU for 1096ms burst [Q A5 B0 A6 B4 A4 A3 A9 A8 A2 A1 A7 B1]
+time 9073ms: Process B5 (tau 23ms) completed I/O; added to ready queue [Q B5 A5 B0 A6 B4 A4 A3 A9 A8 A2 A1 A7 B1]
+time 9174ms: Process B2 (tau 181ms) completed I/O; added to ready queue [Q B5 B2 A5 B0 A6 B4 A4 A3 A9 A8 A2 A1 A7 B1]
+time 9283ms: Process B9 (tau 26ms) completed I/O; added to ready queue [Q B5 B9 B2 A5 B0 A6 B4 A4 A3 A9 A8 A2 A1 A7 B1]
+time 9960ms: Process A0 (tau 193ms) completed a CPU burst; 28 bursts to go [Q B5 B9 B2 A5 B0 A6 B4 A4 A3 A9 A8 A2 A1 A7 B1]
+time 9960ms: Recalculated tau for process A0: old tau 193ms ==> new tau 1060ms [Q B5 B9 B2 A5 B0 A6 B4 A4 A3 A9 A8 A2 A1 A7 B1]
+time 9960ms: Process A0 switching out of CPU; blocking on I/O until time 10047ms [Q B5 B9 B2 A5 B0 A6 B4 A4 A3 A9 A8 A2 A1 A7 B1]
+time 9964ms: Process B5 (tau 23ms) started using the CPU for 14ms burst [Q B9 B2 A5 B0 A6 B4 A4 A3 A9 A8 A2 A1 A7 B1]
+time 9978ms: Process B5 (tau 23ms) completed a CPU burst; 26 bursts to go [Q B9 B2 A5 B0 A6 B4 A4 A3 A9 A8 A2 A1 A7 B1]
+time 9978ms: Recalculated tau for process B5: old tau 23ms ==> new tau 15ms [Q B9 B2 A5 B0 A6 B4 A4 A3 A9 A8 A2 A1 A7 B1]
+time 9978ms: Process B5 switching out of CPU; blocking on I/O until time 11100ms [Q B9 B2 A5 B0 A6 B4 A4 A3 A9 A8 A2 A1 A7 B1]
+time 9982ms: Process B9 (tau 26ms) started using the CPU for 142ms burst [Q B2 A5 B0 A6 B4 A4 A3 A9 A8 A2 A1 A7 B1]
+167
+104
+46
+94
+164
+time 14424ms: Process A5 terminated [Q B5 B3 B6 B2 B9 A6 B4 A4 A3 B8 A9 A8 A2 A1 A7 A0 B0 B1]
+57
+54
+98
+78
+70
+57
+time 16592ms: Process B6 terminated [Q B2 B4 A4 A3 B8 A6 A9 A8 A2 A1 A7 A0 B0 B1]
+48
+737
+61
+48
+27
+715
+575
+150
+164
+0
+time 22485ms: Process B9 terminated [Q B8 A8 A2 A3 A1 A9 A6 A7 A0 A4 B0 B1]
+724
+277
+724
+763
+8
+808
+time 24014ms: Process B2 terminated [Q A8 A2 B5 A3 A1 A9 A6 A7 A0 A4 B0 B1]
+50
+546
+394
+545
+108
+92
+158
+176
+194
+111
+110
+3
+105
+120
+175
+102
+time 31308ms: Process B4 terminated [Q A3 B5 A1 A9 A6 A7 A2 A8 A0 A4 B0 B1]
+11
+295
+94
+196
+652
+210
+86
+246
+154
+86
+82
+25
+61
+274
+469
+510
+281
+289
+240
+226
+time 38006ms: Process B5 terminated [Q A1 A9 B7 A6 A7 A2 A8 A3 A0 A4 B0 B1]
+191
+time 40138ms: Process B8 terminated [Q A9 B7 A6 A7 A2 A8 A3 A0 A4 B0 A1 B1]
+35
+351
+77
+177
+142
+613
+706
+1627
+223
+210
+122
+1581
+503
+time 44922ms: Process B3 terminated [Q A6 A9 A7 A2 A8 A3 A0 A4 B0 A1 B1]
+450
+1656
+1665
+time 47454ms: Process B7 terminated [Q A9 A7 A2 A8 A3 A0 A4 B0 A6 A1 B1]
+127
+15
+102
+64
+161
+414
+267
+2
+234
+86
+221
+231
+194
+251
+181
+244
+98
+44
+248
+208
+35
+221
+169
+106
+107
+163
+163
+time 64612ms: Process A2 terminated [Q A3 A0 A4 B0 A6 A7 A1 A9 A8 B1]
+887
+779
+840
+48
+197
+348
+307
+410
+363
+274
+453
+201
+97
+time 75387ms: Process A4 terminated [Q B0 A6 A7 A1 A9 A3 A8 B1]
+51
+290
+259
+130
+203
+85
+533
+39
+76
+98
+128
+310
+244
+129
+164
+335
+8
+86
+86
+290
+73
+107
+103
+32
+27
+129
+118
+118
+454
+651
+time 92065ms: Process B0 terminated [Q A6 A7 A1 A9 A3 A0 A8 B1]
+446
+422
+346
+461
+344
+460
+255
+time 96326ms: Process A6 terminated [Q A7 A1 A9 A3 A0 A8 B1]
+0
+539
+535
+455
+530
+565
+351
+351
+437
+558
+571
+499
+481
+459
+539
+time 101722ms: Process A7 terminated [Q A1 A9 A3 A0 A8 B1]
+41
+75
+251
+841
+328
+171
+time 106878ms: Process A1 terminated [Q A9 A3 A0 A8 B1]
+315
+209
+157
+time 108624ms: Process A3 terminated [Q A0 A8 B1]
+405
+493
+484
+time 111241ms: Process A0 terminated [Q A9 A8 B1]
+19
+62
+108
+time 114319ms: Process A8 terminated [Q B1]
+190
+979
+180
+667
+time 122258ms: Process A9 terminated [Q empty]
+time 123271ms: Process B1 terminated [Q empty]
+time 123273ms: Simulator ended for SRT [Q empty]
 SRT simulation completed
 
 Simulating RR

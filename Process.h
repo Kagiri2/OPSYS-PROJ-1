@@ -41,12 +41,15 @@ public:
     int get_total_burst_time() const;
     void increment_io_completion_time() { io_completion_time++;}
     void set_io_completion_time(int time) { io_completion_time = time; }
+    void set_preempted_status(bool val) { preempted = val; }
+    bool get_preempted_status() { return preempted; }
 
 private:
     std::string pid;
     int arrival_time;
     std::vector<std::pair<int, int> > cpu_bursts;
     bool is_cpu_bound;
+    bool preempted;
     CPU cpu;
     int current_burst_index;
     int io_completion_time;
