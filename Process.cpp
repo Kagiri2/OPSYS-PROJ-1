@@ -82,6 +82,7 @@ void Process::reset() {
     remaining_time = 0;
     tau = 0;
     completed = false;
+    preempted = false;
 }
 
 void Process::preempt(int time_used) {
