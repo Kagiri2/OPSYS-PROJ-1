@@ -7,7 +7,7 @@
 
 class Process {
 public:
-    Process(std::string id, int arrive_time, bool cpu_bound);
+    Process(std::string id, int arrive_time, bool cpu_bound, int context_switch_time);
 
     void generate_bursts(int seed, int upper_bound, double lambda, bool is_cpu_bound);
 
@@ -57,6 +57,7 @@ private:
     int remaining_time;
     int tau;
     bool completed;
+    int t_cs;
 };
 
 #endif
