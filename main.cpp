@@ -26,6 +26,7 @@ void print_simulation_results(const std::string& algorithm, const std::vector<Pr
 
 // PART 2 OUTPUT FUNCTIONS
 void print_verbose_output(const std::string& event, int time, const Process& process);
+void print_algorithm_start(const std::string& algorithm);
 void print_algorithm_end(const std::string& algorithm);
 
 void calculate_statistics(const std::vector<Process>& processes, int t_cs);
@@ -40,10 +41,7 @@ std::vector<Process> generate_processes(int n, int ncpu, int seed, double lambda
     CPU cpu;
 
     for (int i = 0; i < n; i++) {
-        char letter = 'A' + i / 10;
-        int number = i % 10;
-        std::string pid = std::string(1, letter) + std::to_string(number);
-        
+        std::string pid = std::string(1, 'A' + i / 10) + std::to_string(i % 10);
         bool is_cpu_bound = i < ncpu;
         int arrival_time = cpu.getArrivalTime(seed, upper_bound, lambda);
 
@@ -69,7 +67,7 @@ void print_processes(const std::vector<Process>& processes, Totaller& tot) {
         if (process->get_num_bursts() == 1) {
             std::cout << " CPU burst:" << std::endl;
         } else {
-            std::cout << " CPU bursts" << std::endl;
+            std::cout << " CPU bursts:" << std::endl;
         }
 
         /* NOT NEEDED FOR PART 2
@@ -216,9 +214,6 @@ void print_processes(const std::vector<Process>& processes, Totaller& tot) {
                     if (remaining_bursts == 0) {
                         std::cout << "time " << current_time + 1 << "ms: Process " << current_process->get_pid() 
                                 << " terminated [Q " << print_queue(ready_queue) << "]" << std::endl;
-                        if (!ready_queue.empty()) {
-                            current_time++; // Increment time if queue is not empty
-                        }
                         switching_out = true;
                         context_switch_remaining = t_cs / 2;
                         current_process->update_completion_status();
@@ -229,7 +224,7 @@ void print_processes(const std::vector<Process>& processes, Totaller& tot) {
                                 << (remaining_bursts == 1 ? " burst" : " bursts") << " to go [Q " << print_queue(ready_queue) << "]" << std::endl;
                         }
                         
-                        current_process->start_io(current_time + 1);
+                        int io_time = current_process->start_io(current_time + 3);
                         if(current_time < 10000) {
                             std::cout << "time " << current_time + 1 << "ms: Process " << current_process->get_pid() 
                                 << " switching out of CPU; blocking on I/O until time " 
@@ -373,9 +368,6 @@ void print_processes(const std::vector<Process>& processes, Totaller& tot) {
                     if (remaining_bursts == 0) {
                         std::cout << "time " << current_time + 1 << "ms: Process " << current_process->get_pid() 
                                 << " terminated [Q " << print_queue(ready_queue) << "]" << std::endl;
-                        if (!ready_queue.empty()) {
-                            current_time++; // Increment time if queue is not empty
-                        }
                         switching_out = true;
                         context_switch_remaining = t_cs / 2;
                         current_process->update_completion_status();
@@ -394,7 +386,7 @@ void print_processes(const std::vector<Process>& processes, Totaller& tot) {
                             std::cout << "time " << current_time + 1 << "ms: Recalculated tau for process " << current_process->get_pid() << ": old tau " << old_tau << "ms ==> new tau " << current_process->get_tau() << "ms [Q " << print_queue(ready_queue) << "]" << std::endl;
                         }
 
-                        current_process->start_io(current_time + 1);
+                        int io_time = current_process->start_io(current_time + 3);
                         if(current_time < 10000) {
                             std::cout << "time " << current_time + 1 << "ms: Process " << current_process->get_pid() 
                                 << " switching out of CPU; blocking on I/O until time " 
@@ -415,7 +407,7 @@ void print_processes(const std::vector<Process>& processes, Totaller& tot) {
             }
         }
 
-        std::cout << "time " << current_time << "ms: Simulator ended for SJF [Q " << print_queue(ready_queue) << "]" << std::endl;
+        std::cout << "time " << current_time << "ms: Simulator ended for FCFS [Q " << print_queue(ready_queue) << "]" << std::endl;
     }
 
     void simulate_srt(std::vector<Process>& processes, int t_cs, double alpha, double lambda) {
@@ -428,7 +420,6 @@ void print_processes(const std::vector<Process>& processes, Totaller& tot) {
         std::cout << "time 0ms: Simulator started for SRT [Q empty]" << std::endl;
 
         while (true) {
-
             // Check for new arrivals
             for (Process& p : processes) {
                 if (p.get_arrival_time() == current_time) {
@@ -472,7 +463,7 @@ void print_processes(const std::vector<Process>& processes, Totaller& tot) {
                     if(p.get_tau() == 0) {
                         p.set_tau(1/lambda);
                     }
-                    if(current_process != nullptr && p.get_tau() < current_process->get_tau()) {
+                    if(current_process != nullptr && p.get_tau() < (current_process->get_tau() - (current_process->get_cpu_bursts()[current_process->get_current_burst_index()].first - current_process->get_remaining_time()))) {
                         preempt = true;
                         switching_out = true;
                         context_switch_remaining = t_cs / 2 + 1;
@@ -500,39 +491,42 @@ void print_processes(const std::vector<Process>& processes, Totaller& tot) {
                         }
                     }
                     
-                    if(current_time < 10000) {
-                        if(!preempt) {
+                    if(!preempt) {
+                        if(current_time < 10000) {
                             std::cout << "time " << current_time << "ms: Process " << p.get_pid() 
                             << " (tau " << p.get_tau() << "ms)" << " completed I/O; added to ready queue [Q " << print_queue(ready_queue) << "]" << std::endl;
-                        } else {
-                            // recalculate old tau for preempted process
-                            // old tau - (cpu_burst time - remaining time)
-                            int old_tau = current_process->get_tau();
-                            current_process->set_tau(old_tau - (current_process->get_cpu_bursts()[current_process->get_current_burst_index()].first - current_process->get_remaining_time()) );
+                        }
+                    } else {
+                        // recalculate old tau for preempted process
+                        // old tau - (cpu_burst time - remaining time)
+                        int old_tau = current_process->get_tau();
+                        current_process->set_tau( old_tau - (current_process->get_cpu_bursts()[current_process->get_current_burst_index()].first - current_process->get_remaining_time()) );
+                        if(current_time < 10000) {
                             std::cout << "time " << current_time << "ms: Process " << p.get_pid() 
                             << " (tau " << p.get_tau() << "ms)" << " completed I/O; preempting " << current_process->get_pid() << " (predicted remaining time " << current_process->get_tau() << "ms)" << " [Q " << print_queue(ready_queue) << "]" << std::endl;
-                            // add back curr process according to tau
-                            bool added = false;
-                            for(std::list<Process*>::iterator itr = ready_queue.begin(); itr != ready_queue.end(); itr++ ) {
-                                if(current_process->get_tau() == (*itr)->get_tau()) {
-                                    if(current_process->get_pid() < (*itr)->get_pid()) {
-                                        added = true;
-                                        ready_queue.insert(itr, current_process);
-                                        break;
-                                    }
-                                }
-                                if(current_process->get_tau() < (*itr)->get_tau()) {
+                        }
+                        // add back curr process according to tau
+                        bool added = false;
+                        for(std::list<Process*>::iterator itr = ready_queue.begin(); itr != ready_queue.end(); itr++ ) {
+                            if(current_process->get_tau() == (*itr)->get_tau()) {
+                                if(current_process->get_pid() < (*itr)->get_pid()) {
                                     added = true;
                                     ready_queue.insert(itr, current_process);
                                     break;
                                 }
                             }
-                            if(!added) {
-                                ready_queue.push_back(current_process);
+                            if(current_process->get_tau() < (*itr)->get_tau()) {
+                                added = true;
+                                ready_queue.insert(itr, current_process);
+                                break;
                             }
-                            current_process = nullptr;
                         }
+                        if(!added) {
+                            ready_queue.push_back(current_process);
+                        }
+                        current_process = nullptr;
                     }
+                
                 }
             }
 
@@ -571,9 +565,6 @@ void print_processes(const std::vector<Process>& processes, Totaller& tot) {
                     if (remaining_bursts == 0) {
                         std::cout << "time " << current_time + 1 << "ms: Process " << current_process->get_pid() 
                                 << " terminated [Q " << print_queue(ready_queue) << "]" << std::endl;
-                        if (!ready_queue.empty()) {
-                            current_time++; // Increment time if queue is not empty
-                        }
                         switching_out = true;
                         context_switch_remaining = t_cs / 2;
                         current_process->update_completion_status();
@@ -592,7 +583,7 @@ void print_processes(const std::vector<Process>& processes, Totaller& tot) {
                             std::cout << "time " << current_time + 1 << "ms: Recalculated tau for process " << current_process->get_pid() << ": old tau " << old_tau << "ms ==> new tau " << current_process->get_tau() << "ms [Q " << print_queue(ready_queue) << "]" << std::endl;
                         }
 
-                        current_process->start_io(current_time + 1);
+                        int io_time = current_process->start_io(current_time + 3);
                         if(current_time < 10000) {
                             std::cout << "time " << current_time + 1 << "ms: Process " << current_process->get_pid() 
                                 << " switching out of CPU; blocking on I/O until time " 
@@ -613,7 +604,7 @@ void print_processes(const std::vector<Process>& processes, Totaller& tot) {
             }
         }
 
-        std::cout << "time " << current_time << "ms: Simulator ended for SRT [Q " << print_queue(ready_queue) << "]" << std::endl;
+        std::cout << "time " << current_time << "ms: Simulator ended for FCFS [Q " << print_queue(ready_queue) << "]" << std::endl;
     }
 
     void simulate_rr(std::vector<Process>& processes, int t_cs, int t_slice) {
@@ -689,12 +680,10 @@ void print_processes(const std::vector<Process>& processes, Totaller& tot) {
                     if (remaining_bursts == 0) {
                         std::cout << "time " << current_time + 1 << "ms: Process " << current_process->get_pid() 
                                 << " terminated [Q " << print_queue(ready_queue) << "]" << std::endl;
-                        if (!ready_queue.empty()) {
-                            current_time++; // Increment time if queue is not empty
-                        }
+                        current_process->update_completion_status();
                         switching_out = true;
                         context_switch_remaining = t_cs / 2;
-                        current_process->update_completion_status();
+                        current_process = nullptr;
                     } else {
                         if(current_time < 10000) {
                             std::cout << "time " << current_time + 1 << "ms: Process " << current_process->get_pid() 
@@ -702,7 +691,7 @@ void print_processes(const std::vector<Process>& processes, Totaller& tot) {
                                 << (remaining_bursts == 1 ? " burst" : " bursts") << " to go [Q " << print_queue(ready_queue) << "]" << std::endl;
                         }
                         
-                        current_process->start_io(current_time + 1);
+                        int io_time = current_process->start_io(current_time + 1);
                         int io_completion_time = current_process->get_io_completion_time();
                         
                         bool conflict = false;
@@ -795,8 +784,12 @@ void print_processes(const std::vector<Process>& processes, Totaller& tot) {
         std::cout << "Time " << time << "ms: " << event << " " << process.get_pid() << std::endl;
     }
 
+    void print_algorithm_start(const std::string& algorithm) {
+        std::cout << "Simulating " << algorithm << std::endl;
+    }
+
     void print_algorithm_end(const std::string& algorithm) {
-        std::cout << "\n";
+        std::cout << algorithm << " simulation completed\n" << std::endl;
     }
 
     void calculate_statistics(const std::vector<Process>& processes, int t_cs) {
@@ -819,14 +812,14 @@ int main(int argc, char** argv) {
         two-character code consisting of an uppercase letter from A to Z followed by a number from
         0 to 9. Processes are assigned in order A0, A1, A2, . . ., A9, B0, B1, . . ., Z9.
     */
-    int num_processes = atoi(*(argv+1));
+    int num_processes =atoi(*(argv+1));
     /*
         Define n_cpu as the number of processes that are CPU-bound. For this project, we
         will classify processes as I/O-bound or CPU-bound. The n_cpu CPU-bound processes, when
         generated, will have CPU burst times that are longer by a factor of 4 and will have I/O burst
         times that are shorter by a factor of 8.
     */
-    int num_cpu_processes = atoi(*(argv+2));
+    int num_cpu_processes =atoi(*(argv+2));
     /*
         *(argv+3): We will use a pseudo-random number generator to determine the interarrival
         times of CPU bursts. This command-line argument, i.e. seed, serves as the seed for the
@@ -844,6 +837,7 @@ int main(int argc, char** argv) {
     */
 
     double lambda = atof(*(argv+4));
+    //double lambda = atof(*(argv+4));
     /*
         For the exponential distribution, this command-line argument represents the
         upper bound for valid pseudo-random numbers. This threshold is used to avoid values far
@@ -873,22 +867,22 @@ int main(int argc, char** argv) {
     
     std::cout << "\n<<< PROJECT PART II" << std::endl;
     std::cout << std::fixed << std::setprecision(2) << "<<< -- t_cs=" << t_cs << "ms; alpha=" << alpha << "; t_slice=" << t_slice << "ms" << std::endl;
-    
+
+    print_algorithm_start("FCFS");
     simulate_fcfs(processes, t_cs);
     print_algorithm_end("FCFS");
     reset_processes(processes);
-
+    print_algorithm_start("SJF");
     simulate_sjf(processes, t_cs, alpha, lambda);
     print_algorithm_end("SJF");
     reset_processes(processes);
-   
+    print_algorithm_start("SRT");
     simulate_srt(processes, t_cs, alpha, lambda);
     print_algorithm_end("SRT");
-    
     reset_processes(processes);
+    print_algorithm_start("RR");
     simulate_rr(processes, t_cs, t_slice);
     print_algorithm_end("RR");
-    
     
     // Print final statistics
     print_statistics("FCFS");
