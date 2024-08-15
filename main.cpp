@@ -612,7 +612,7 @@ void print_processes(const std::vector<Process>& processes, Totaller& tot) {
             }
         }
 
-        std::cout << "time " << current_time << "ms: Simulator ended for FCFS [Q " << print_queue(ready_queue) << "]" << std::endl;
+        std::cout << "time " << current_time << "ms: Simulator ended for SRT [Q " << print_queue(ready_queue) << "]" << std::endl;
     }
 
     void simulate_rr(std::vector<Process>& processes, int t_cs, int t_slice) {
